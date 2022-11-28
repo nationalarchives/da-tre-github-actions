@@ -56,5 +56,5 @@ def send_message_to_slack():
     if resp.status_code == 200:
         print(f'OK: {resp.json().get("ok")}, Error: {resp.json().get("error")}')
     else:
-        print(f'Fail to send: {resp.json().get("error")}')
+        print(f'Fail to send: {resp.json()}')
 send_message_to_slack()
