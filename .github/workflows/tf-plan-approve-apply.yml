@@ -40,8 +40,23 @@ jobs:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: eu-west-2
           role-session-name: github-username-${{ github.triggering_actor }}
+      - name: Checkout tre-github-actions
+        uses: actions/checkout@v2
+        with:
+          repository: nationalarchives/tre-github-actions
+      - name: Copy /Scripts
+        run: |
+          pwd
+          ls -la
+          ls -la ../ 
+          cp -r scripts ../          
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Move /Scrpits to Working Directory
+        run: |
+          pwd
+          ls -la
+          mv -r ../scripts .
       - name: Setting terraform version
         uses: hashicorp/setup-terraform@v1
         with:
