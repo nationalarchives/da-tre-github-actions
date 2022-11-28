@@ -54,7 +54,7 @@ def send_message_to_slack():
     encoded_msg = json.dumps(msg, indent=2).encode("utf-8")
     resp = requests.post(slack_webhook, data=encoded_msg)
     if resp.status_code == 200:
-        print(f'OK: {resp.json().get("ok")}, Error: {resp.json().get("error")}')
+        print("A message sent to slack with links to CloudWatch Log Stream for terraform plan and GitHub Workflow")
     else:
-        print(f'Fail to send: {resp.text}')
+        print(f"Error: {resp.text}")
 send_message_to_slack()
