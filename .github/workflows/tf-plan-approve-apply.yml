@@ -52,7 +52,7 @@ jobs:
           pip install -r script/requirements.txt
       - name: Terraform Plan
         run: |
-          ./plan.sh
+          ./scripts/plan.sh
       - name: Send to Slack
         run: | 
           pwd
@@ -90,6 +90,6 @@ jobs:
         run: |
           terraform -v
           ls -la
-          ./apply.sh
+          ./scripts/apply.sh
 
           
