@@ -5,7 +5,7 @@ set -e
 echo
 function cleanup {
     status=$?; 
-    if [ $status != 0 ] && [ -f error.txt ]; then echo "Failure: $status" && python3 ../script/send_to_cw.py error.txt; fi
+    if [ $status != 0 ] && [ -f error.txt ]; then echo "Failure: $status" && python3 ../scripts/send_to_cw.py error.txt; fi
 }
 
 trap cleanup EXIT
