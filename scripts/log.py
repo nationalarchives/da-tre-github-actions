@@ -13,6 +13,7 @@ log_stream_name = os.environ['LOG_STREAM_NAME']
 env = os.environ['ENV']
 github_url = os.environ['GITHUB_URL'] 
 slack_webhook = os.environ['SLACK_WEBHOOK']
+slack_channel = os.environ['SLACK_CHANNEL']
 file_name = os.environ["TF_DIR"]+"/plan.txt"
 
 # Get the plan.txt file
@@ -45,7 +46,7 @@ def send_message_to_slack():
 
     message = f"Please review <{cloud_watch_url}|terraform plan> for `{env}` in the management account and approve the <{github_url}|workflow>"
     msg = {
-    "channel": "tna-test",
+    "channel": slack_channel,
     "username": "terraform-plan",
     "text": message
     }
