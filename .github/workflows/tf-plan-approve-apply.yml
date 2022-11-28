@@ -47,15 +47,14 @@ jobs:
       - name: Copy /Scripts
         run: |
           pwd
-          ls -la
-          ls -la ../ 
+          ls -la ../
           cp -r scripts ../          
       - name: Checkout
         uses: actions/checkout@v2
       - name: Move /Scrpits to Working Directory
         run: |
           pwd
-          ls -la
+          ls -la ../
           mv ../scripts .
       - name: Setting terraform version
         uses: hashicorp/setup-terraform@v1
@@ -95,8 +94,22 @@ jobs:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: eu-west-2
           role-session-name: role-session-name-${{ github.triggering_actor }}
+      - name: Checkout tre-github-actions
+        uses: actions/checkout@v2
+        with:
+          repository: nationalarchives/tre-github-actions
+      - name: Copy /Scripts
+        run: |
+          pwd
+          ls -la ../
+          cp -r scripts ../          
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Move /Scrpits to Working Directory
+        run: |
+          pwd
+          ls -la ../
+          mv ../scripts .
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.3.5
