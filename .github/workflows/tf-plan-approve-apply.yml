@@ -56,7 +56,7 @@ jobs:
         run: |
           pwd
           ls -la
-          mv -r ../scripts .
+          mv ../scripts .
       - name: Setting terraform version
         uses: hashicorp/setup-terraform@v1
         with:
