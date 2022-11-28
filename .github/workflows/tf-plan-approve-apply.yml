@@ -56,7 +56,7 @@ jobs:
       - name: Send to Slack
         run: | 
           pwd
-          python3 script/log.py
+          python3 scripts/log.py
   approve:
     needs: 
       - plan
