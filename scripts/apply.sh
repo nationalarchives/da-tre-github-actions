@@ -24,4 +24,4 @@ terraform workspace select "${ENV}"
 terraform plan -var-file="terraform.tfvars" -input=false -out plan.out > /dev/null 2> error.txt
 aws s3 cp s3://dev-te-testdata/tmp/"${ENV}"/"${TRIGGERING_ACTOR}"/plan.out plan.out
 terraform show -no-color plan.out > plan.txt
-terraform apply -input=false plan.out 2> error.txt
+terraform apply -input=false plan.out > apply.out 2> error.txt
