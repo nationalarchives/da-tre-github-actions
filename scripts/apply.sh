@@ -16,6 +16,6 @@ cd "${TF_DIR}"
 pwd
 ls -la
 sh ../scripts/init.sh
-terraform plan -var-file="terraform.tfvars" -input=false -out plan.out > /dev/null 2> error.txt
+terraform plan -var-file="terraform.tfvars.json" -input=false -out plan.out > /dev/null 2> error.txt
 aws s3 cp "${TERRAFORM_PLAN_BUCKET}"/"${ENV}"/"${TRIGGERING_ACTOR}"/plan.out plan.out > /dev/null 2> error.txt
 terraform apply -input=false plan.out > apply.out 2> error.txt
