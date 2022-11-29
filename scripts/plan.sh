@@ -18,4 +18,5 @@ sh ../scripts/init.sh
 terraform plan -var-file="terraform.tfvars" -input=false -out plan.out > /dev/null 2> error.txt
 terraform show -no-color plan.out > plan.txt
 ls -la
-aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${ENV}"/"${TRIGGERING_ACTOR}"/plan.out
+echo "${TERRAFORM_PLAN_BUCKET}"
+aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${ENV}"/"${TRIGGERING_ACTOR}"/
