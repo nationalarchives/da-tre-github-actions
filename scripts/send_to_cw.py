@@ -13,7 +13,7 @@ log_group_name = os.environ['LOG_GROUP_NAME']
 log_stream_name = os.environ['LOG_STREAM_NAME']
 file_name = sys.argv[1]
 if file_name == 'error.txt':
-    log_group_name = "github-actions-error"
+    log_group_name = "tre-github-actions-error"
 # Get the plan.txt file
 
 def get_file_content(file_name):
@@ -24,6 +24,7 @@ def get_file_content(file_name):
 
 # Send terraform plan to CloudWatch for review
 def send_to_cloudwatch():
+    print(log_group_name)
     log_event = get_file_content(file_name)
     client.create_log_stream(logGroupName=log_group_name, logStreamName=log_stream_name)
     response = client.put_log_events(logGroupName=log_group_name,
