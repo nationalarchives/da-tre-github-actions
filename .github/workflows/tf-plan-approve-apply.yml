@@ -108,6 +108,8 @@ jobs:
           cp -r scripts ../          
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          submodules: recursive           
       - name: Move /Scrpits to Working Directory
         run: |
           pwd
