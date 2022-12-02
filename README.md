@@ -1,2 +1,11 @@
 # tre-github-actions
-a repository to store common github actions for tre
+
+Common TRE github actions.
+
+## Release History
+
+| Action                                         | Version | Summary |
+| ---------------------------------------------- | ------- | ------- |
+| .github/actions/docker-build-and-deploy-to-ecr | 0.0.1   | Created |
+| .github/actions/get-next-version               | 0.0.1   | Created |
+| .github/workflows/tf-plan-approve-apply.yml    | 0.0.1   | Created |
