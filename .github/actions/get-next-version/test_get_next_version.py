@@ -1,7 +1,7 @@
 import unittest
 from get_next_version import get_next_version
 
-TEST_REPO_NAME = 'tre-blueprint-test-repository'
+TEST_REPO_NAME = 'tre-github-actions'
 
 class TestGetNextVersion(unittest.TestCase):
     """
