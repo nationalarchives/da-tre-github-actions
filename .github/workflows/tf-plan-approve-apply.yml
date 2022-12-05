@@ -19,7 +19,7 @@ on:
         required: true
 
 env:
-  SLACK_CHANNEL: a # da-tre-automated-messages
+  SLACK_CHANNEL: da-tre-automated-messages
   SLACK_WEBHOOK: ${{ secrets.SLACK_TOKEN }}
   GITHUB_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
   ENV: ${{ inputs.environment }}
