@@ -43,6 +43,14 @@ runs:
         IMAGE_VERSION: ${{ inputs.image-version }}
         ECR_REPOSITORY_NAME: ${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}
       run: |
+        # Test local login
+        aws codeartifact login \
+          --tool pip \
+          --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} \
+          --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} \
+          --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT-owner }} \
+          --region ${{ secrets.aws-region }}
+
         docker images
         docker build \
           --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
