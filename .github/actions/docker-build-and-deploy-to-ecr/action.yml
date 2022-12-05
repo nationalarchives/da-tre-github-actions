@@ -21,6 +21,15 @@ inputs:
   role-to-assume:
     description: 'The AWS role for authentication'
     required: true
+  aws-codeartifact-repository-name:
+    description: 'The AWS CodeArtifact repository to be used'
+    required: true
+  aws-codeartifact-repository-domain:
+    description: 'The domain of the AWS CodeArtifact repository to be used'
+    required: true
+  aws-codeartifact-repository-account:
+    description: 'The AWS account ID of the AWS CodeArtifact repository to be used'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -46,10 +55,10 @@ runs:
         # Test local login
         aws codeartifact login \
           --tool pip \
-          --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} \
-          --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} \
-          --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT-owner }} \
-          --region ${{ secrets.aws-region }}
+          --repository ${{ inputs.aws-codeartifact-repository-name }} \
+          --domain ${{ inputs.aws-codeartifact-repository-domain }} \
+          --domain-owner ${{ inputs.aws-codeartifact-repository-account }} \
+          --region ${{ inputs.aws-region }}
 
         docker images
         docker build \
