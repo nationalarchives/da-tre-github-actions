@@ -1,11 +1,7 @@
-# Action to log in to AWS CodeArtifact.
+# Action to log in to AWS CodeArtifact; saves pip/pypi access URL to named file.
 name: 'AWS CodeArtifact Repository Login'
 description: 'Log in to an AWS CodeArtifact repository'
 inputs:
-  tool:
-    description: 'The tool to configure; e.g. "pip"'
-    default: 'pip'
-    required: false
   repository:
     description: 'The AWS CodeArtifact repository name; e.g. "example-repo"'
     required: true
@@ -15,11 +11,21 @@ inputs:
   domain-owner:
     description: 'The AWS CodeArtifact domain owner (typically AWS account ID)'
     required: true
+  auth-token-duration:
+    description: 'Seconds until generated auth token expires'
+    default: '900'
+    required: false
+  pypi-url-username:
+    description: 'The username used in the URL to access AWS CodeArtifact'
+    required: true
   aws-region:
     description: 'The AWS region in which the CodeArtifact repository resides'
     required: true
   role-to-assume:
     description: 'The AWS role for authentication'
+    required: true
+  pip-url-output-file:
+    description: 'Name of file to which pip access URL will be written'
     required: true
 runs:
   using: "composite"
@@ -34,9 +40,14 @@ runs:
     - name: AWS CodeArtifact login
       shell: bash
       run: |
-        aws codeartifact login \
-          --tool ${{ inputs.tool }} \
-          --repository ${{ inputs.repository }} \
-          --domain ${{ inputs.domain }} \
-          --domain-owner ${{ inputs.domain-owner }} \
-          --region ${{ inputs.aws-region }}
+        CA_AUTH_TOKEN="$( \
+          aws codeartifact get-authorization-token \
+          --duration "${{ inputs.auth-token-duration }}" \
+          --domain "${{ inputs.domain }}" \
+          --domain-owner "${{ inputs.domain-owner }}" \
+          --query authorizationToken \
+          --output text \
+        )"
+
+        echo "https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" \
+          > "${{ inputs.output-url-filename }}"
