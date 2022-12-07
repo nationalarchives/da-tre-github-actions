@@ -69,7 +69,12 @@ runs:
         ls -la
         shasum -a 256 "${{ inputs.pip-url-output-file }}"
 
-        PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
+        export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
+        
+        # Diagnostic info; remove once end-to-end working
+        echo "Environment variable value check follows:"
+        echo "${PIP_INDEX_URL}" | shasum -a 256
+
         docker images
         docker build \
           --build-arg PIP_INDEX_URL \
