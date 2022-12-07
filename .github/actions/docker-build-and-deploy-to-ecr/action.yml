@@ -65,14 +65,15 @@ runs:
         IMAGE_VERSION: ${{ inputs.image-version }}
         ECR_REPOSITORY_NAME: ${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}
       run: |
-        # Diagnostic info; remove once end-to-end working
+        echo "Local file listing follows:"
         ls -la
+        echo "SHA256 of pip-url-output-file follows:"
         shasum -a 256 "${{ inputs.pip-url-output-file }}"
 
+        echo "Exporting pip-url-output-file content in PIP_INDEX_URL:"
         export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
         
-        # Diagnostic info; remove once end-to-end working
-        echo "Environment variable value check follows:"
+        echo "SHA256 of PIP_INDEX_URL environment variable follows:"
         echo "${PIP_INDEX_URL}" | shasum -a 256
 
         docker images

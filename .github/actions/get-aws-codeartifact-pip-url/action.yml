@@ -52,6 +52,8 @@ runs:
         echo "https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" \
           > "${{ inputs.pip-url-output-file }}"
 
-        # Diagnostic info; remove once end-to-end working
+        echo "Local file listing follows:"
         ls -la
+
+        echo "SHA256 of pip-url-output-file follows:"
         shasum -a 256 "${{ inputs.pip-url-output-file }}"
