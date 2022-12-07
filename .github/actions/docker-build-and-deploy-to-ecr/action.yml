@@ -35,7 +35,7 @@ runs:
   using: "composite"
   steps:
     - name: Get AWS CodeArtifact pip URL
-      uses: nationalarchives/tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@feature/DTE-473/add-common-ecr-build-actions
+      uses: nationalarchives/tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.2
       with:
         repository: ${{ inputs.aws-codeartifact-repository-name }}
         domain: ${{ inputs.aws-codeartifact-repository-domain }}
