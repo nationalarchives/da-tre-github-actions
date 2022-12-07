@@ -1,0 +1,49 @@
+# Action to log in to AWS CodeArtifact; saves pip/pypi access URL to named file.
+name: 'AWS CodeArtifact Repository Login'
+description: 'Log in to an AWS CodeArtifact repository'
+inputs:
+  repository:
+    description: 'The AWS CodeArtifact repository name; e.g. "example-repo"'
+    required: true
+  domain:
+    description: 'The AWS CodeArtifact repository domain; e.g. "example-domain"'
+    required: true
+  domain-owner:
+    description: 'The AWS CodeArtifact domain owner (typically AWS account ID)'
+    required: true
+  auth-token-duration:
+    description: 'Seconds until generated auth token expires'
+    default: '900'
+    required: false
+  pypi-url-username:
+    description: 'The username used in the URL to access AWS CodeArtifact'
+    required: true
+  aws-region:
+    description: 'The AWS region in which the CodeArtifact repository resides'
+    required: true
+  pip-url-output-file:
+    description: 'Name of file to which pip access URL will be written'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: AWS CodeArtifact login
+      shell: bash
+      run: |
+        CA_AUTH_TOKEN="$( \
+          aws codeartifact get-authorization-token \
+          --duration "${{ inputs.auth-token-duration }}" \
+          --domain "${{ inputs.domain }}" \
+          --domain-owner "${{ inputs.domain-owner }}" \
+          --query authorizationToken \
+          --output text \
+        )"
+
+        echo "https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" \
+          > "${{ inputs.pip-url-output-file }}"
+
+        echo "Local file listing follows:"
+        ls -la
+
+        echo "SHA256 of pip-url-output-file follows:"
+        shasum -a 256 "${{ inputs.pip-url-output-file }}"
