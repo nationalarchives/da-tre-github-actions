@@ -65,6 +65,10 @@ runs:
         IMAGE_VERSION: ${{ inputs.image-version }}
         ECR_REPOSITORY_NAME: ${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}
       run: |
+        # Diagnostic info; remove once end-to-end working
+        ls -la
+        shasum -a 256 "${{ inputs.pip-url-output-file }}"
+
         PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
         docker images
         docker build \
