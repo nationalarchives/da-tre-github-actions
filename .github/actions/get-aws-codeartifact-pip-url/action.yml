@@ -21,22 +21,12 @@ inputs:
   aws-region:
     description: 'The AWS region in which the CodeArtifact repository resides'
     required: true
-  role-to-assume:
-    description: 'The AWS role for authentication'
-    required: true
   pip-url-output-file:
     description: 'Name of file to which pip access URL will be written'
     required: true
 runs:
   using: "composite"
   steps:
-    - name: AWS credential setup
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: ${{ inputs.role-to-assume }}
-        aws-region: ${{ inputs.aws-region }}
-        # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-        role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
     - name: AWS CodeArtifact login
       shell: bash
       run: |
