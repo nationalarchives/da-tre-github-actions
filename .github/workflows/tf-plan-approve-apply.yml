@@ -13,8 +13,6 @@ on:
         required: true
       AWS_PARAM_STORE_TF_BACKEND_KEY:
         required: true
-      AWS_PARAM_STORE_TF_VARS_KEY:
-        required: true
       SLACK_TOKEN:
         required: true
 
