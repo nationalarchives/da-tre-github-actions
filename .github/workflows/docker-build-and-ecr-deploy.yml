@@ -1,0 +1,80 @@
+# Gets next git version tag, builds and deploys Docker image to ECR; if
+# successful, tags git with new version.
+name: docker-build-and-ecr-deploy
+on:
+  workflow_call:
+    inputs:
+      docker_image_name:
+        type: string
+        required: true
+      build_dir:
+        type: string
+        required: true
+      ecr_registry_path:
+        type: string
+        required: true
+      python_version:
+        type: string
+        default: '3.9'
+    secrets:
+      AWS_OPEN_ID_CONNECT_ROLE_ARN:
+        required: true
+      AWS_CODEARTIFACT_REPOSITORY_NAME:
+        required: true
+      AWS_CODEARTIFACT_REPOSITORY_DOMAIN:
+        required: true
+      AWS_CODEARTIFACT_REPOSITORY_ACCOUNT:
+        required: true
+      AWS_REGION:
+        required: true
+jobs:
+  build-deploy-and-tag-ecr-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Diagnostic info
+        run: |
+          printf 'github.event.repository.name=%s\n' "${{ github.event.repository.name }}"
+          printf 'github.api_url=%s\n' "${{ github.api_url }}"
+          printf 'inputs.python_version=%s\n' "${{ inputs.python_version }}"
+      - name: Checkout current
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ inputs.python_version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python_version }}
+      - name: Run tests
+        run: |
+          python --version
+          # Uncomment the following lines if tests are available
+          # cd ${{ inputs.build_dir }}
+          # python -m unittest discover ./tests -p 'test_*.py'
+      - name: Get the version to use to tag this build
+        id: build-tag
+        uses: nationalarchives/tre-github-actions/.github/actions/get-next-version@0.0.1
+        with:
+          repo-name: ${{ github.event.repository.name }}
+      - name: Diagnostic info
+        run: |
+          printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
+      - name: AWS credential setup
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+      - name: Build and push Docker image to AWS ECR
+        uses: nationalarchives/tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.2
+        with:
+          dockerfile-dir: ${{ inputs.build_dir }}
+          image-name: ${{ inputs.docker_image_name }}
+          image-version: ${{ steps.build-tag.outputs.next-version }}
+          ecr-registry-path: ${{ inputs.ecr_registry_path }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-codeartifact-repository-name: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
+          aws-codeartifact-repository-domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
+          aws-codeartifact-repository-account: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }}
+      - name: Add Git tag for this build
+        run: |
+          git tag ${{ steps.build-tag.outputs.next-version }}
+          git push origin ${{ steps.build-tag.outputs.next-version }}
