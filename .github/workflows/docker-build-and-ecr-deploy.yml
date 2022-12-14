@@ -29,6 +29,9 @@ on:
         required: true
       AWS_REGION:
         required: true
+permissions:
+  id-token: write  # required by aws-actions/configure-aws-credentials
+  contents: write  # to push new git tag
 jobs:
   build-deploy-and-tag-ecr-image:
     runs-on: ubuntu-latest
