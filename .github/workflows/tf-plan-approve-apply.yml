@@ -5,6 +5,9 @@ on:
       environment:
         type: string
         required: true
+      environment-for-approval:
+        type: string
+        required: true
       tf_dir:
         type: string
         required: true             
@@ -17,7 +20,6 @@ on:
         required: true
       SLACK_TOKEN:
         required: true
-
 env:
   SLACK_CHANNEL: a # da-tre-automated-messages
   SLACK_WEBHOOK: ${{ secrets.SLACK_TOKEN }}
@@ -78,7 +80,7 @@ jobs:
     needs: 
       - plan
     runs-on: ubuntu-latest
-    environment: poc-manual-step
+    environment: ${{ inputs.environment-for-approval }}
     steps:
       - name: Manual Approve Info
         run: |
