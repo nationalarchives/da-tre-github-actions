@@ -11,6 +11,8 @@ on:
       run_pre_commit:
         type: boolean
         required: true
+env:
+  PYTHON_VERSION: '3.8'
 jobs:
   check-unit-tests:
     if: inputs.run_unit_tests
@@ -21,7 +23,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: $PYTHON_VERSION
       - name: Run unit tests
         shell: bash
         run: |
@@ -36,7 +38,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: $PYTHON_VERSION
       - name: Run feature tests
         shell: bash
         run: |
@@ -52,7 +54,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: $PYTHON_VERSION
       - name: Run pre-commit
         shell: bash
         run: |
