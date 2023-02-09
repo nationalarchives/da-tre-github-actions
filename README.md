@@ -12,3 +12,4 @@ Common TRE github actions.
 | .github/workflows/docker-build-and-ecr-deploy.yml | 0.0.3 | Created                                              |
 | .github/workflows/tf-plan-approve-apply.yml       | 0.0.1 | Created                                              |
 | .github/workflows/tf-plan-approve-apply.yml       | 0.0.4 | Allow different manual approval step names (DTE-543) |
+| .github/workflows/tf-plan-approve-apply.yml       | 0.0.5 | Capture Apply output (DTE-588 and DTE-544)           |
