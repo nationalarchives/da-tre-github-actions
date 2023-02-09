@@ -73,17 +73,17 @@ jobs:
           pip install -r scripts/requirements.txt
       - name: Terraform Plan
         run: |
-          ./scripts/plan.sh      
+          ./scripts/plan.sh
       - name: Notify Sucess
         if: success()
-        run: | 
+        run: |
           ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/plan.txt"
           ./scripts/send_to_slack.py -m "Approval requested for <$CLOUDWATCH_LOGS_URL|terraform plan> in \`$ENV\` for <$GITHUB_URL|workflow> by \`$TRIGGERING_ACTOR\`"
       - name: Notify Failure
         if: ${{ failure() && env.TF_PLAN_CHANGES != 0 }}
         run: |
           if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
-            ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/error.txt"; 
+            ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/error.txt";
             echo "Error.txt send to $CLOUDWATCH_LOGS_URL";
           fi
   approve:
@@ -143,12 +143,12 @@ jobs:
           ./scripts/apply.sh
       - name: Notify Sucess
         if: success()
-        run: | 
+        run: |
           ./scripts/send_to_cloud_watch.py -f "${{ inputs.tf_dir }}/apply.out"
       - name: Notify Failure
         if: failure()
         run: |
           if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
-            ./scripts/send_to_cloud_watch.py -f "${{ inputs.tf_dir }}/error.txt"; 
+            ./scripts/send_to_cloud_watch.py -f "${{ inputs.tf_dir }}/error.txt";
             echo "Error.txt send to $CLOUDWATCH_LOGS_URL";
           fi
