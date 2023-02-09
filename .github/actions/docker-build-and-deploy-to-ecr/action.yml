@@ -61,7 +61,7 @@ runs:
 
         echo "Exporting pip-url-output-file content in PIP_INDEX_URL:"
         export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
-        
+
         echo "SHA256 of PIP_INDEX_URL environment variable follows:"
         echo "${PIP_INDEX_URL}" | shasum -a 256
 
