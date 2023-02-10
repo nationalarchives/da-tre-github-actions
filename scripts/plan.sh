@@ -1,13 +1,23 @@
 #!/bin/bash
 cd "${TF_DIR}"
 sh ../scripts/init.sh
-terraform plan -var-file="terraform.tfvars.json" -input=false -out plan.out -detailed-exitcode > /dev/null 2> error.txt
+terraform plan -no-color -detailed-exitcode -input=false -var-file="terraform.tfvars.json" -out plan.out > /dev/null 2> error.txt
+TF_EXIT_CODE=$? 
+echo "TF exited with ${TF_EXIT_CODE}"
 
 # If there are no changes then set a VAR and fail
-if [ $? -eq 0 ]; then
+if [ $TF_EXIT_CODE -eq 0 ]; then
   echo "::notice::No changes in plan.  Exiting";
   echo "TF_PLAN_CHANGES=0" >> $GITHUB_ENV
   exit 1;
 fi
+
+# If Terraform errors
+if [ $TF_EXIT_CODE -eq 1 ]; then
+  echo "::error::Terraform exited 1.  Exiting";
+  exit 1;
+fi
+
+set -e
 terraform show -no-color plan.out > plan.txt 2> error.txt
 aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${ENV}"/"${TRIGGERING_ACTOR}"/ > /dev/null 2> error.txt

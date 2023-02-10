@@ -55,7 +55,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: Move /scripts to Working Directory
@@ -80,7 +80,7 @@ jobs:
           ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/plan.txt"
           ./scripts/send_to_slack.py -m "Approval requested for <$CLOUDWATCH_LOGS_URL|terraform plan> in \`$ENV\` for <$GITHUB_URL|workflow> by \`$TRIGGERING_ACTOR\`"
       - name: Notify Failure
-        if: ${{ failure() && env.TF_PLAN_CHANGES != 0 }}
+        if: ${{ failure() }}
         run: |
           if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
             ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/error.txt";
@@ -121,7 +121,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: Move /scripts to Working Directory
