@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           echo "Today is $DAY_OF_WEEK"
-          echo "PV is $PYTHON_VERSION
+          echo "PV is $PYTHON_VERSION"
           cd tests/units
           python -m unittest discover
   check-feature-tests:
