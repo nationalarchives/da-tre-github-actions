@@ -13,7 +13,6 @@ on:
         required: true
 env:
   PYTHON_VERSION: '3.8'
-  DAY_OF_WEEK: Monday
 jobs:
   check-unit-tests:
     if: inputs.run_unit_tests
@@ -24,12 +23,10 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Run unit tests
         shell: bash
         run: |
-          echo "Today is $DAY_OF_WEEK"
-          echo "PV is $PYTHON_VERSION"
           cd tests/units
           python -m unittest discover
   check-feature-tests:
@@ -38,11 +35,6 @@ jobs:
     steps:
       - name: Checkout current
         uses: actions/checkout@v3
-      - name: temp check
-        shell: bash
-        run: |
-          echo "Today is $DAY_OF_WEEK"
-          echo "PV is $PYTHON_VERSION"
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -62,7 +54,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: $PYTHON_VERSION
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Run pre-commit
         shell: bash
         run: |
