@@ -27,7 +27,6 @@ jobs:
       - name: Run unit tests
         shell: bash
         run: |
-          pip install ${{ inputs.requirements_txt }}
           cd tests/units
           python -m unittest discover
   check-feature-tests:
