@@ -12,7 +12,7 @@ on:
         type: boolean
         required: true
 env:
-  PYTHON_VERSION: 3.8
+  PYTHON_VERSION: '3.8'
   DAY_OF_WEEK: Monday
 jobs:
   check-unit-tests:
