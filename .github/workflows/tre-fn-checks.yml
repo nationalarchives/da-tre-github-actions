@@ -38,6 +38,11 @@ jobs:
     steps:
       - name: Checkout current
         uses: actions/checkout@v3
+      - name: temp check
+        shell: bash
+        run: |
+          echo "Today is $DAY_OF_WEEK"
+          echo "PV is $PYTHON_VERSION"
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
