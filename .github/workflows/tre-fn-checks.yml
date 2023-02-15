@@ -13,6 +13,7 @@ on:
         required: true
 env:
   PYTHON_VERSION: '3.8'
+  DAY_OF_WEEK: Monday
 jobs:
   check-unit-tests:
     if: inputs.run_unit_tests
@@ -27,6 +28,7 @@ jobs:
       - name: Run unit tests
         shell: bash
         run: |
+          echo "Today is $DAY_OF_WEEK"
           cd tests/units
           python -m unittest discover
   check-feature-tests:
