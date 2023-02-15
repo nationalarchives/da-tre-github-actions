@@ -11,6 +11,9 @@ on:
       run_pre_commit:
         type: boolean
         required: true
+      requirements_txt:
+        type: string
+        required: false
 env:
   PYTHON_VERSION: '3.8'
 jobs:
@@ -27,6 +30,7 @@ jobs:
       - name: Run unit tests
         shell: bash
         run: |
+          pip install ${{ inputs.requirements_txt }}
           cd tests/units
           python -m unittest discover
   check-feature-tests:
