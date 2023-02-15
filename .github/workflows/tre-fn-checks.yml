@@ -12,7 +12,7 @@ on:
         type: boolean
         required: true
 env:
-  PYTHON_VERSION: '3.8'
+  PYTHON_VERSION: 3.8
   DAY_OF_WEEK: Monday
 jobs:
   check-unit-tests:
@@ -29,6 +29,7 @@ jobs:
         shell: bash
         run: |
           echo "Today is $DAY_OF_WEEK"
+          echo "PV is $PYTHON_VERSION
           cd tests/units
           python -m unittest discover
   check-feature-tests:
@@ -40,7 +41,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '$PYTHON_VERSION'
+          python-version: $PYTHON_VERSION
       - name: Run feature tests
         shell: bash
         run: |
