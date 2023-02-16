@@ -112,4 +112,3 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.0
-
