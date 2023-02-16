@@ -101,8 +101,8 @@ jobs:
           cd tests
           behave
   check-pre-commit:
-    runs-on: ubuntu-latest
     if: inputs.run_pre_commit
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout current
         uses: actions/checkout@v3
@@ -117,3 +117,15 @@ jobs:
           pre-commit --version
           pre-commit install
           pre-commit run --all-files
+  check-pre-commit-better:
+    runs-on: ubuntu-latest
+    if: inputs.run_pre_commit
+    steps:
+      - name: Checkout current
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.0
