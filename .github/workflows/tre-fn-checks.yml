@@ -15,6 +15,7 @@ on:
         type: string
         required: false
       pip-url-output-file:
+        type: string
         description: 'Name of file to which pip access URL will be written'
         default: 'pip-url.txt'
         required: false
