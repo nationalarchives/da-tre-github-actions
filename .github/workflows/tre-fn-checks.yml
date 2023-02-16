@@ -43,6 +43,13 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+      - name: AWS credential setup
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Get AWS CodeArtifact pip URL
         uses: nationalarchives/tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.2
         with:
