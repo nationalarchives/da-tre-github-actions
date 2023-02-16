@@ -30,6 +30,8 @@ on:
         required: false
       AWS_REGION:
         required: false
+permissions:
+  id-token: write  # required by aws-actions/configure-aws-credentials
 env:
   PYTHON_VERSION: '3.8'
 jobs:
@@ -43,10 +45,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: 'Set PYTHONPATH to "${{ github.action_path }}"'
-        shell: bash
-        run: |
-          echo "PYTHONPATH=${{ github.action_path }}" >> $GITHUB_ENV
       - name: AWS credential setup
         uses: aws-actions/configure-aws-credentials@v1
         with:
