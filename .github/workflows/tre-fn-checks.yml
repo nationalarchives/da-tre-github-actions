@@ -63,6 +63,10 @@ jobs:
       - name: Run unit tests
         shell: bash
         run: |
+          echo "===MK=="
+          ls -la
+          export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
+          echo "--MK--"
           pip install -r ${{ inputs.requirements_txt }}
           cd tests/units
           python -m unittest discover
