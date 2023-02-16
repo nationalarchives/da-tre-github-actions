@@ -2,7 +2,7 @@
 cd "${TF_DIR}"
 sh ../scripts/init.sh
 terraform plan -no-color -detailed-exitcode -input=false -var-file="terraform.tfvars.json" -out plan.out > /dev/null 2> error.txt
-TF_EXIT_CODE=$? 
+TF_EXIT_CODE=$?
 echo "TF exited with ${TF_EXIT_CODE}"
 
 # If there are no changes then set a VAR and fail
