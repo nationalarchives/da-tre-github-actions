@@ -63,16 +63,12 @@ jobs:
       - name: Run unit tests
         shell: bash
         run: |
-          echo "===MK=="
-          ls -la
           export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
-          echo "--MK--"
           pip install -r ${{ inputs.requirements_txt }}
           cd tests/units
           python -m unittest discover
   check-feature-tests:
     runs-on: ubuntu-latest
-    if: inputs.run_feature_tests
     steps:
       - name: Checkout current
         uses: actions/checkout@v3
@@ -82,6 +78,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Run feature tests
         shell: bash
+        if: inputs.run_feature_tests
         run: |
           pip install behave
           cd tests
