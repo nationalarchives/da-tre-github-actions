@@ -3,7 +3,7 @@
 name: docker-build-and-ecr-deploy
 on:
   workflow_call:
-    # Define inputs to be passed from calling workflow 
+    # Define inputs to be passed from calling workflow
     inputs:
       # Name of created Docker image (version will be next git tag version)
       docker_image_name:
@@ -17,7 +17,7 @@ on:
       ecr_registry_path:
         type: string
         required: true
-    # Define secrets to be passed from calling workflow 
+    # Define secrets to be passed from calling workflow
     secrets:
       AWS_OPEN_ID_CONNECT_ROLE_ARN:
         required: true

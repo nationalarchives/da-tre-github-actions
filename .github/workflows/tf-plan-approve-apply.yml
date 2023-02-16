@@ -30,11 +30,15 @@ env:
   TRIGGERING_ACTOR: ${{ github.triggering_actor }}
   TF_DIR: ${{ inputs.tf_dir }}
   TERRAFORM_PLAN_BUCKET: s3://tre-terraform-plan
+  CLOUDWATCH_LOGS_BASE_URL: "https://console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/"
+
 jobs:
   plan:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
+      - name: Set friendly logs_url
+        run: echo "CLOUDWATCH_LOGS_URL=${CLOUDWATCH_LOGS_BASE_URL}${LOG_GROUP_NAME}/log-events/${LOG_STREAM_NAME}" >> $GITHUB_ENV
       - name: Configure AWS credentials for test AWS role
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -42,7 +46,7 @@ jobs:
           aws-region: eu-west-2
           role-session-name: github-username-${{ github.triggering_actor }}
       - name: Checkout tre-github-actions
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: nationalarchives/tre-github-actions
       - name: Copy /scripts
@@ -51,7 +55,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: Move /scripts to Working Directory
@@ -70,10 +74,18 @@ jobs:
       - name: Terraform Plan
         run: |
           ./scripts/plan.sh
-      - name: Send to Slack
+      - name: Notify Sucess
+        if: success()
         run: |
-          pwd
-          python3 scripts/log.py
+          ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/plan.txt"
+          ./scripts/send_to_slack.py -m "Approval requested for <$CLOUDWATCH_LOGS_URL|terraform plan> in \`$ENV\` for <$GITHUB_URL|workflow> by \`$TRIGGERING_ACTOR\`"
+      - name: Notify Failure
+        if: ${{ failure() }}
+        run: |
+          if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
+            ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/error.txt";
+            echo "Error.txt send to $CLOUDWATCH_LOGS_URL";
+          fi
   approve:
     needs:
       - plan
@@ -91,6 +103,8 @@ jobs:
       - approve
     environment:  ${{ inputs.environment }}
     steps:
+      - name: Set friendly logs_url
+        run: echo "CLOUDWATCH_LOGS_URL=${CLOUDWATCH_LOGS_BASE_URL}${LOG_GROUP_NAME}/log-events/${LOG_STREAM_NAME}" >> $GITHUB_ENV
       - name: Configure AWS credentials for test AWS role
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -98,7 +112,7 @@ jobs:
           aws-region: eu-west-2
           role-session-name: role-session-name-${{ github.triggering_actor }}
       - name: Checkout tre-github-actions
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: nationalarchives/tre-github-actions
       - name: Copy /scripts
@@ -107,7 +121,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: Move /scripts to Working Directory
@@ -127,3 +141,14 @@ jobs:
           terraform -v
           ls -la
           ./scripts/apply.sh
+      - name: Notify Sucess
+        if: success()
+        run: |
+          ./scripts/send_to_cloud_watch.py -f "${{ inputs.tf_dir }}/apply.out"
+      - name: Notify Failure
+        if: failure()
+        run: |
+          if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
+            ./scripts/send_to_cloud_watch.py -f "${{ inputs.tf_dir }}/error.txt";
+            echo "Error.txt send to $CLOUDWATCH_LOGS_URL";
+          fi

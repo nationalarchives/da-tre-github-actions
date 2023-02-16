@@ -1,18 +1,20 @@
 import unittest
 from get_next_version import get_next_version
 
-TEST_REPO_NAME = 'tre-github-actions'
+TEST_REPO_NAME = "tre-github-actions"
+
 
 class TestGetNextVersion(unittest.TestCase):
     """
     Test the get_next_version function.
     """
+
     def test_basic_run(self):
         """
         Test output as expected.
         """
         result = get_next_version(repo_name=TEST_REPO_NAME)
-        values = result.split('.')
+        values = result.split(".")
         major = int(values[0])
         minor = int(values[1])
         patch = int(values[2])
@@ -24,15 +26,14 @@ class TestGetNextVersion(unittest.TestCase):
         """
         Test suffix added as expected.
         """
-        test_version_suffix = 'a-test-version-suffix'
+        test_version_suffix = "a-test-version-suffix"
         result = get_next_version(
-            repo_name=TEST_REPO_NAME,
-            version_suffix=test_version_suffix
+            repo_name=TEST_REPO_NAME, version_suffix=test_version_suffix
         )
 
-        parts = result.split('-', maxsplit=1)
+        parts = result.split("-", maxsplit=1)
         self.assertTrue(parts[1] == test_version_suffix)
-        values = parts[0].split('.')
+        values = parts[0].split(".")
         major = int(values[0])
         minor = int(values[1])
         patch = int(values[2])
