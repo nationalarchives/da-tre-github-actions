@@ -1,0 +1,114 @@
+name: on-push-checks
+on:
+  workflow_call:
+    inputs:
+      run_unit_tests:
+        type: boolean
+        required: true
+      run_feature_tests:
+        type: boolean
+        required: true
+      run_pre_commit:
+        type: boolean
+        required: true
+      requirements_txt:
+        type: string
+        required: false
+      pip-url-output-file:
+        type: string
+        description: 'Name of file to which pip access URL will be written'
+        default: 'pip-url.txt'
+        required: false
+    secrets:
+      AWS_OPEN_ID_CONNECT_ROLE_ARN:
+        required: false
+      AWS_CODEARTIFACT_REPOSITORY_NAME:
+        required: false
+      AWS_CODEARTIFACT_REPOSITORY_DOMAIN:
+        required: false
+      AWS_CODEARTIFACT_REPOSITORY_ACCOUNT:
+        required: false
+      AWS_REGION:
+        required: false
+permissions:
+  id-token: write  # required by aws-actions/configure-aws-credentials
+env:
+  PYTHON_VERSION: '3.8'
+jobs:
+  check-unit-tests:
+    if: inputs.run_unit_tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: AWS credential setup
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+      - name: Get AWS CodeArtifact pip URL
+        uses: nationalarchives/tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.2
+        with:
+          repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
+          domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
+          domain-owner: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          pip-url-output-file: ${{ inputs.pip-url-output-file }}
+      - name: Run unit tests
+        shell: bash
+        run: |
+          export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
+          pip install -r ${{ inputs.requirements_txt }}
+          cd tests/units
+          python -m unittest discover
+  check-feature-tests:
+    if: inputs.run_feature_tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: AWS credential setup
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+      - name: Get AWS CodeArtifact pip URL
+        uses: nationalarchives/tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.2
+        with:
+          repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
+          domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
+          domain-owner: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          pip-url-output-file: ${{ inputs.pip-url-output-file }}
+      - name: Run feature tests
+        shell: bash
+        run: |
+          export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
+          pip install -r ${{ inputs.requirements_txt }}
+          pip install behave
+          cd tests
+          behave
+  check-pre-commit:
+    runs-on: ubuntu-latest
+    if: inputs.run_pre_commit
+    steps:
+      - name: Checkout current
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.0
