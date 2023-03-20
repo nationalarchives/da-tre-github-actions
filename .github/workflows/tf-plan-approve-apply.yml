@@ -52,6 +52,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: nationalarchives/tre-github-actions
+          ref: feature/DTE-632/personal-test-environment
       - name: Copy /scripts
         run: |
           pwd
@@ -76,6 +77,7 @@ jobs:
           pip install -r scripts/requirements.txt
       - name: Terraform Plan
         run: |
+          cat ./scripts/init.sh
           ./scripts/plan.sh
       - name: Notify Sucess
         if: success()
