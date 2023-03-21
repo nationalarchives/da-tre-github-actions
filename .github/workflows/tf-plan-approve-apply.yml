@@ -94,7 +94,7 @@ jobs:
     needs:
       - plan
     runs-on: ubuntu-latest
-    environment: $GH_ENV_FOR_APPROVAL
+    environment: ${{ env.GH_ENV_FOR_APPROVAL }}
     steps:
       - name: Manual Approve Info
         run: |
