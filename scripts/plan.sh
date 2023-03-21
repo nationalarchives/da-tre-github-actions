@@ -20,4 +20,4 @@ fi
 
 set -e
 terraform show -no-color plan.out > plan.txt 2> error.txt
-aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${ENV}"/"${TRIGGERING_ACTOR}"/ > /dev/null 2> error.txt
+aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${TRE_ENV}"/"${TRIGGERING_ACTOR}"/ > /dev/null 2> error.txt

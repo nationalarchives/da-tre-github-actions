@@ -5,9 +5,9 @@ aws ssm get-parameters --name "${AWS_PARAM_STORE_TF_BACKEND_KEY}" --with-decrypt
 aws ssm get-parameters --name "${AWS_PARAM_STORE_TF_VARS_KEY}" --with-decryption --query "Parameters[*].Value" --output text > terraform.tfvars.json 2> error.txt
 terraform init -backend-config=backend.conf -reconfigure > /dev/null 2> error.txt
 terraform workspace list 2> error.txt
-if $(terraform workspace list 2> error.txt | grep -q "${TERRAFORM_WORKSPACE}") ; then \
-    terraform workspace select ${TERRAFORM_WORKSPACE} 2> error.txt;
+if $(terraform workspace list 2> error.txt | grep -q "${TRE_ENV}") ; then \
+    terraform workspace select ${TRE_ENV} 2> error.txt;
 else 
-    terraform workspace new ${TERRAFORM_WORKSPACE} 2> error.txt;
-    echo "New workspace ${TERRAFORM_WORKSPACE} created"
+    terraform workspace new ${TRE_ENV} 2> error.txt;
+    echo "New workspace ${TRE_ENV} created"
 fi
