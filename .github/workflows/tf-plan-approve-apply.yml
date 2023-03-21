@@ -14,7 +14,7 @@ on:
       aws_param_store_tf_vars_key:
         type: string
         required: true
-      tf_workspace:
+      terraform_workspace:
         type: string
         required: true      
     secrets:
@@ -35,7 +35,7 @@ env:
   AWS_PARAM_STORE_TF_VARS_KEY: ${{ inputs.aws_param_store_tf_vars_key }}
   TRIGGERING_ACTOR: ${{ github.triggering_actor }}
   TF_DIR: ${{ inputs.tf_dir }}
-  TF_WORKSPACE: ${{ inputs.tf_workspace }}
+  TERRAFORM_WORKSPACE: ${{ inputs.terraform_workspace }}
   TERRAFORM_PLAN_BUCKET: s3://tre-terraform-plan
   CLOUDWATCH_LOGS_BASE_URL: "https://console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/"
 
