@@ -23,7 +23,6 @@ env:
   SLACK_WEBHOOK: ${{ secrets.SLACK_TOKEN }}
   GITHUB_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
   GH_ENV: ${{ inputs.github_environment }}
-  GH_ENV_FOR_APPROVAL: apply-tf-plan-to-${{ inputs.github_environment }}
   TRE_ENV: ${{ inputs.tre_environment }}
   LOG_GROUP_NAME: "tre-${{ inputs.github_environment }}-terraform-plan"
   LOG_STREAM_NAME: "run-id-${{ github.run_id }}-attempt-${{ github.run_attempt }}"
@@ -94,7 +93,7 @@ jobs:
     needs:
       - plan
     runs-on: ubuntu-latest
-    environment: ${{ GH_ENV_FOR_APPROVAL }}
+    environment: apply-tf-plan-to-${{ inputs.github_environment }}
     steps:
       - name: Manual Approve Info
         run: |
