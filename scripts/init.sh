@@ -9,4 +9,5 @@ if $(terraform workspace list 2> error.txt | grep -q "${TF_WORKSPACE}") ; then \
     terraform workspace select ${TF_WORKSPACE} 2> error.txt;
 else 
     terraform workspace new ${TF_WORKSPACE} 2> error.txt;
+    echo "New workspace ${TF_WORKSPACE} created"
 fi
