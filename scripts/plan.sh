@@ -1,5 +1,6 @@
 #!/bin/bash
 cd "${TF_DIR}"
+ls -la
 sh ../scripts/init.sh
 terraform plan -no-color -detailed-exitcode -input=false -var-file="terraform.tfvars.json" -out plan.out > /dev/null 2> error.txt
 TF_EXIT_CODE=$?

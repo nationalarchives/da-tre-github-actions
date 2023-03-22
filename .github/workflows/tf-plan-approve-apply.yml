@@ -19,7 +19,7 @@ on:
       SLACK_TOKEN:
         required: true
 env:
-  SLACK_CHANNEL: da-tre-automated-messages
+  SLACK_CHANNEL: tna-test
   SLACK_WEBHOOK: ${{ secrets.SLACK_TOKEN }}
   GITHUB_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
   GH_ENV: ${{ inputs.github_environment }}
