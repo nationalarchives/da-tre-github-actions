@@ -1,5 +1,6 @@
 #!/bin/bash
 cd "${TF_DIR}"
+ls -la ../
 sh ../scripts/init.sh
 terraform plan -no-color -detailed-exitcode -input=false -var-file="terraform.tfvars.json" -out plan.out > /dev/null 2> error.txt
 TF_EXIT_CODE=$?
@@ -20,4 +21,4 @@ fi
 
 set -e
 terraform show -no-color plan.out > plan.txt 2> error.txt
-aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${ENV}"/"${TRIGGERING_ACTOR}"/ > /dev/null 2> error.txt
+aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${TRE_ENV}"/"${TRIGGERING_ACTOR}"/ > /dev/null 2> error.txt
