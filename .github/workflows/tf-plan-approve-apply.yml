@@ -11,6 +11,9 @@ on:
       tf_dir:
         type: string
         required: true
+      github_action_ref:
+        type: string
+        required: true
     secrets:
       ROLE_ARN:
         required: true
@@ -24,8 +27,8 @@ env:
   GITHUB_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
   GH_ENV: ${{ inputs.github_environment }}
   TRE_ENV: ${{ inputs.tre_environment }}
-  LOG_GROUP_NAME: "tre-${{ inputs.github_environment }}-terraform-plan"
-  LOG_STREAM_NAME: "run-id-${{ github.run_id }}-attempt-${{ github.run_attempt }}"
+  LOG_GROUP_NAME: "tre-${{ inputs.github_environment }}-github-actions-logs"
+  LOG_STREAM_NAME: "${{ github.triggering_actor }}-${{ github.run_id }}-${{ github.run_attempt }}"
   AWS_PARAM_STORE_TF_BACKEND_KEY: ${{ secrets.AWS_PARAM_STORE_TF_BACKEND_KEY }}
   AWS_PARAM_STORE_TF_VARS_KEY: tre-${{ inputs.tre_environment }}-tfvars
   TRIGGERING_ACTOR: ${{ github.triggering_actor }}
@@ -50,7 +53,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: nationalarchives/tre-github-actions
-          ref: feature/DTE-632/personal-test-environment
+          ref: ${{ inputs.github_action_ref }}
       - name: Copy /scripts
         run: |
           pwd
@@ -118,6 +121,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: nationalarchives/tre-github-actions
+          ref: ${{ inputs.github_action_ref }}
       - name: Copy /scripts
         run: |
           pwd
