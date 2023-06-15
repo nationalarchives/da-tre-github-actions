@@ -1,0 +1,116 @@
+# A reusable workflow for deploying terrafrom
+# Expects a var file from the file system and the name of a SSM param containing tf vars in JSON to download - these are passed in second and thus have the highest priority
+# terraform -detailed-exitcode flag is used.  This returns 2 if a plan detects changes.  If a plan has no changes the approval stage, artefacting and plan stage are skipped.
+# If a plan has changes and user has requested an apply, it will be stored as an artefact
+
+# USAGE
+# Environment Vars:
+#   ROLE_ARN = full arn of the role the runner should assume
+#   TERRAFORM_VERSION = Version of Terraform to use e.g. 1.4.6
+#   APPROVERS = a comma delimited string of GitHub users name who can approve the step
+# For parameters see the descriptions below
+
+name: Reusable Terraform plan, apply, destroy
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git Ref to checkout, leave blank for main
+        required: false
+        type: string
+      workspace:
+        description: Terraform workspace to use
+        required: true
+        type: string
+      environment:
+        description: Github environment to use
+        type: string
+        required: true
+      scm_vars_file:
+        description: Path of tfvars to use
+        required: true
+        type: string
+      ssm_vars_file:
+        description: Name of param to download for additional vars
+        required: true
+        type: string
+      needs_approval:
+        description: set to raise a manual approval after plan
+        type: boolean
+        required: false
+        default: true
+      run_apply:
+        description: Run terraform apply?
+        required: false
+        type: boolean
+        default: false
+      run_destroy:
+        description: Run terraform destroy?
+        type: boolean
+        default: false
+jobs:
+  terraform:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Setup AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ vars.ROLE_ARN }}
+          aws-region: eu-west-2
+      - run:  aws sts get-caller-identity
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+         ref: ${{ inputs.ref }}
+      - name: Get vars from SSM
+        run: |
+          aws ssm get-parameters --name ${{ inputs.ssm_vars_file }} \
+          --with-decryption --query "Parameters[*].Value" \
+          --output text > ssm.tfvars.json
+          cat "ssm.tfvars.json"
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ vars.TERRAFORM_VERSION }}
+          terraform_wrapper: true
+      - name: Terraform init
+        run: |
+          terraform init -reconfigure --backend-config=backend.conf
+          terraform workspace list
+          terraform workspace select ${{ inputs.workspace }}
+      - name: Terraform plan
+        if: inputs.run_destroy == false
+        id: terraform_plan
+        run: |
+           terraform plan -input=false -detailed-exitcode  -var-file ${{ inputs.scm_vars_file }} -var-file ssm.tfvars.json -out=tfplan.out
+      # - run: echo "Wrapper exitcode was ${{ steps.terraform_plan.outputs.exitcode }}"
+      # Always store the plan if terraform plan detects changes and user has requested an apply
+      - name: Store apply plan
+        if: ${{ inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2 }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan-${{ inputs.environment }}.out
+          path: tfplan.out
+      - name: wait-for-approval
+        if: ${{ inputs.needs_approval && inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2}}
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: ${{ vars.APPROVERS }}
+          minimum-approvals: 1
+          issue-title: "Please approve plan for ${{ inputs.environment }}"
+          issue-body: "Please approve or deny the deployment of TREv2 to ${{ inputs.environment }}"
+      - name: Terraform apply
+        if: ${{ inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2}}
+        run: |
+          terraform apply -input=false -auto-approve tfplan.out
+          echo "### Deployed $(git log -1 '--format=format:%H') to ${{ inputs.workspace }} :tada:" >> $GITHUB_STEP_SUMMARY
+      - name: Terraform Destroy Plan
+        if: ${{ inputs.run_destroy }}
+        run: |
+          terraform  destroy -input=false -auto-approve -var-file ${{ inputs.scm_vars_file }} -var-file ssm.tfvars.json
+          echo "### Destroyed ${{ inputs.workspace }} :boom:" >> $GITHUB_STEP_SUMMARY
