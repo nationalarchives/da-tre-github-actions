@@ -7,7 +7,7 @@ terraform init -backend-config=backend.conf -reconfigure > /dev/null 2> error.tx
 terraform workspace list 2> error.txt
 if $(terraform workspace list 2> error.txt | grep -q "${TRE_ENV}") ; then \
     terraform workspace select ${TRE_ENV} 2> error.txt;
-else 
+else
     terraform workspace new ${TRE_ENV} 2> error.txt;
     echo "New workspace ${TRE_ENV} created"
 fi
