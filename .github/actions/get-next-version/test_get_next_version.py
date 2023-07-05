@@ -1,7 +1,7 @@
 import unittest
 from get_next_version import get_next_version
 
-TEST_REPO_NAME = "tre-github-actions"
+TEST_REPO_NAME = "da-tre-github-actions"
 
 
 class TestGetNextVersion(unittest.TestCase):
