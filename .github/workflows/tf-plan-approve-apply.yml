@@ -49,10 +49,10 @@ jobs:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: eu-west-2
           role-session-name: github-username-${{ github.triggering_actor }}
-      - name: Checkout tre-github-actions
+      - name: Checkout da-tre-github-actions
         uses: actions/checkout@v3
         with:
-          repository: nationalarchives/tre-github-actions
+          repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
       - name: Copy /scripts
         run: |
@@ -117,10 +117,10 @@ jobs:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: eu-west-2
           role-session-name: role-session-name-${{ github.triggering_actor }}
-      - name: Checkout tre-github-actions
+      - name: Checkout da-tre-github-actions
         uses: actions/checkout@v3
         with:
-          repository: nationalarchives/tre-github-actions
+          repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
       - name: Copy /scripts
         run: |
