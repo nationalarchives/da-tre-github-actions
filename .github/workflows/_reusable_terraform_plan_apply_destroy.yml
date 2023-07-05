@@ -98,6 +98,7 @@ jobs:
       - name: wait-for-approval
         if: ${{ inputs.needs_approval && inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2}}
         uses: trstringer/manual-approval@v1
+        timeout-minutes: 90
         with:
           secret: ${{ github.TOKEN }}
           approvers: ${{ vars.APPROVERS }}
