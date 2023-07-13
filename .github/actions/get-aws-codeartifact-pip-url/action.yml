@@ -15,14 +15,8 @@ inputs:
     description: 'Seconds until generated auth token expires'
     default: '900'
     required: false
-  pypi-url-username:
-    description: 'The username used in the URL to access AWS CodeArtifact'
-    required: true
   aws-region:
     description: 'The AWS region in which the CodeArtifact repository resides'
-    required: true
-  pip-url-output-file:
-    description: 'Name of file to which pip access URL will be written'
     required: true
 runs:
   using: "composite"
@@ -39,11 +33,5 @@ runs:
           --output text \
         )"
 
-        echo "https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" \
-          > "${{ inputs.pip-url-output-file }}"
-
-        echo "Local file listing follows:"
-        ls -la
-
-        echo "SHA256 of pip-url-output-file follows:"
-        shasum -a 256 "${{ inputs.pip-url-output-file }}"
+        echo pip_index_url="https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" \
+          >> $GITHUB_OUTPUT

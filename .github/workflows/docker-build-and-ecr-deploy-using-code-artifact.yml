@@ -17,6 +17,18 @@ on:
       ecr_registry_path:
         type: string
         required: true
+    # Define secrets to be passed from calling workflow
+    secrets:
+      AWS_OPEN_ID_CONNECT_ROLE_ARN:
+        required: true
+      AWS_CODEARTIFACT_REPOSITORY_NAME:
+        required: true
+      AWS_CODEARTIFACT_REPOSITORY_DOMAIN:
+        required: true
+      AWS_CODEARTIFACT_REPOSITORY_ACCOUNT:
+        required: true
+      AWS_REGION:
+        required: true
 permissions:
   id-token: write  # required by aws-actions/configure-aws-credentials
   contents: write  # to push new git tag
@@ -46,6 +58,14 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+      - name: Get AWS CodeArtifact pip URL
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.2
+        id: get-pip-index-url
+        with:
+          repository: ${{ inputs.aws-codeartifact-repository-name }}
+          domain: ${{ inputs.aws-codeartifact-repository-domain }}
+          domain-owner: ${{ inputs.aws-codeartifact-repository-account }}
+          aws-region: ${{ inputs.aws-region }}
       - name: Build and push Docker image to AWS ECR
         uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.2
         with:
@@ -53,6 +73,7 @@ jobs:
           image-name: ${{ inputs.docker_image_name }}
           image-version: ${{ steps.build-tag.outputs.next-version }}
           ecr-registry-path: ${{ inputs.ecr_registry_path }}
+          docker-build-arg: ${{ steps.get-pip-index-url.outputs.pip_index_url }}
       - name: Add Git tag for this build
         run: |
           git tag ${{ steps.build-tag.outputs.next-version }}
