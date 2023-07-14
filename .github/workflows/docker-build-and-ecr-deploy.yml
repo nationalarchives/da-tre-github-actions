@@ -17,6 +17,12 @@ on:
       ecr_registry_path:
         type: string
         required: true
+    # Define secrets to be passed from calling workflow
+    secrets:
+      AWS_OPEN_ID_CONNECT_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
 permissions:
   id-token: write  # required by aws-actions/configure-aws-credentials
   contents: write  # to push new git tag
