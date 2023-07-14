@@ -35,13 +35,14 @@ runs:
       run: |
         docker images
         build_arg=""
-        if [ -n ${{ inputs.docker-build-arg }} ]; then
+        if [ -n "${{ inputs.docker-build-arg }}" ]; then
           build_arg="--build-arg ${{ inputs.docker-build-arg }} "
         fi
+        
         docker build \
-          $build_arg \
-          --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
-          "${{ inputs.dockerfile-dir }}"
+        $build_arg \
+        --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
+        "${{ inputs.dockerfile-dir }}"
         docker images
     - name: 'AWS ECR docker push'
       shell: bash
