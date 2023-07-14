@@ -34,8 +34,12 @@ runs:
         ECR_REPOSITORY_NAME: ${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}
       run: |
         docker images
+        build_arg=""
+        if [ -n ${{ inputs.docker-build-arg }} ]; then
+          build_arg="--build-arg ${{ inputs.docker-build-arg }} "
+        fi
         docker build \
-          --build-arg '${{ inputs.docker-build-arg }}' \
+          $build_arg' \
           --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
           "${{ inputs.dockerfile-dir }}"
         docker images
