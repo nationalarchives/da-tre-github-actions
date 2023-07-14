@@ -35,7 +35,7 @@ runs:
       run: |
         docker images
         docker build \
-          --build-arg ${{ inputs.docker-build-arg }} \
+          ${{ if ne(inputs.docker-build-arg, '') }}--build-arg ${{ inputs.docker-build-arg }} ${{ end }} \
           --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
           "${{ inputs.dockerfile-dir }}"
         docker images
