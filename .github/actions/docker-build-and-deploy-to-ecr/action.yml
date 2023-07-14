@@ -39,7 +39,7 @@ runs:
           build_arg="--build-arg ${{ inputs.docker-build-arg }} "
         fi
         docker build \
-          $build_arg' \
+          $build_arg \
           --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
           "${{ inputs.dockerfile-dir }}"
         docker images
