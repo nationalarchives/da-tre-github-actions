@@ -67,7 +67,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Diagnostic info
         run: |
-          printf 'steps.get-pip-index-url.outputs.pip_index_url%s\n' "${{ steps.get-pip-index-url.outputs.pip_index_url }}"
+          printf 'env.pip_index_url%s\n' "${{ env.pip_index_url }}"
       - name: Build and push Docker image to AWS ECR
         uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@feature/DTE-822-github-workflows-with-and-without-codeartifact
         with:
@@ -76,7 +76,7 @@ jobs:
           image-version: ${{ steps.build-tag.outputs.next-version }}
           ecr-registry-path: ${{ inputs.ecr_registry_path }}
           aws-region: ${{ secrets.AWS_REGION }}
-          docker-build-arg: ${{ steps.get-pip-index-url.outputs.pip_index_url }}
+          docker-build-arg: ${{ env.pip_index_url }}
       - name: Add Git tag for this build
         run: |
           git tag ${{ steps.build-tag.outputs.next-version }}

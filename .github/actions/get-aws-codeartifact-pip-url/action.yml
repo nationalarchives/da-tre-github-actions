@@ -22,7 +22,6 @@ runs:
   using: "composite"
   steps:
     - name: AWS CodeArtifact login
-      id: get-pip-index-url
       shell: bash
       run: |
         CA_AUTH_TOKEN="$( \
@@ -34,4 +33,4 @@ runs:
           --output text \
         )"
 
-        echo "pip_index_url=https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" >> $GITHUB_OUTPUT
+        echo "pip_index_url=https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" >> $GITHUB_ENV
