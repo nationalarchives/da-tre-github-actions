@@ -41,9 +41,7 @@ runs:
         if [ -n "${{ inputs.docker-build-arg }}" ]; then
           build_arg="--build-arg ${{ inputs.docker-build-arg }} "
         fi
-        
-        printf 'Using build arg "%s" for docker build' "${{ inputs.docker-build-arg }}"
-        
+                
         docker build \
         $build_arg \
         --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \

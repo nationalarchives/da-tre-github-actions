@@ -34,4 +34,4 @@ runs:
         )"
 
         echo pip_index_url="https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" \
-          >> $GITHUB_OUTPUT
+          >> "$GITHUB_OUTPUT"
