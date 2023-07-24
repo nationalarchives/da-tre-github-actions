@@ -62,9 +62,9 @@ jobs:
         uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@feature/DTE-822-github-workflows-with-and-without-codeartifact
         id: get-pip-index-url
         with:
-          repository: ${{ inputs.aws-codeartifact-repository-name }}
-          domain: ${{ inputs.aws-codeartifact-repository-domain }}
-          domain-owner: ${{ inputs.aws-codeartifact-repository-account }}
+          repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
+          domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
+          domain-owner: ${{ AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Build and push Docker image to AWS ECR
         uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@feature/DTE-822-github-workflows-with-and-without-codeartifact
