@@ -59,6 +59,7 @@ jobs:
           image-name: ${{ inputs.docker_image_name }}
           image-version: ${{ steps.build-tag.outputs.next-version }}
           ecr-registry-path: ${{ inputs.ecr_registry_path }}
+          aws-region: ${{ secrets.AWS_REGION }}
       - name: Add Git tag for this build
         run: |
           git tag ${{ steps.build-tag.outputs.next-version }}

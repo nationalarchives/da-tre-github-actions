@@ -15,6 +15,9 @@ inputs:
   ecr-registry-path:
     description: 'The path part of the repository name; i.e. the "alpha" in "alpha/docker-image-name"'
     required: true
+  aws-region:
+    description: 'AWS region'
+    required: true
   docker-build-arg:
     description: 'Optional build arg to be used by docker'
     required: false
