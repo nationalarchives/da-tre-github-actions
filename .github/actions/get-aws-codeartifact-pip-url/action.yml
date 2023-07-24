@@ -22,6 +22,7 @@ runs:
   using: "composite"
   steps:
     - name: AWS CodeArtifact login
+      id: get-pip-index-url
       shell: bash
       run: |
         CA_AUTH_TOKEN="$( \
