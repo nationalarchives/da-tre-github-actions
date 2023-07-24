@@ -66,6 +66,9 @@ jobs:
           domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
           domain-owner: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }}
           aws-region: ${{ secrets.AWS_REGION }}
+      - name: More diagnostic info
+        run: |
+          printf 'steps.get-pip-index-url.outputs.pip_index_url=%s\n' "${{ steps.get-pip-index-url.outputs.pip_index_url}}"
       - name: Build and push Docker image to AWS ECR
         uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@feature/DTE-822-github-workflows-with-and-without-codeartifact
         with:
