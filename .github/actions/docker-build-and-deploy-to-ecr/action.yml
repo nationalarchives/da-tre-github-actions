@@ -39,7 +39,7 @@ runs:
         docker images
         build_arg=""
         if [ -n "${{ inputs.docker-build-arg-file }}" ]; then
-          arg_file_contents=`cat {{ $inputs.docker-build-arg-file }}`
+          arg_file_contents=$(cat "${{ inputs.docker-build-arg-file }}")
           build_arg="--build-arg $arg_file_contents"
         fi
                 
