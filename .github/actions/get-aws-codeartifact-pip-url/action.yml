@@ -15,12 +15,16 @@ inputs:
     description: 'Seconds until generated auth token expires'
     default: '900'
     required: false
+  pypi-url-username:
+    description: 'The username used in the URL to access AWS CodeArtifact'
+    required: true
   aws-region:
     description: 'The AWS region in which the CodeArtifact repository resides'
     required: true
   pip-url-output-file:
     description: 'Name of file to which pip access URL will be written'
     required: true
+
 runs:
   using: "composite"
   steps:

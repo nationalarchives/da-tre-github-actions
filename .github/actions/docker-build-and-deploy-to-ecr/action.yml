@@ -41,7 +41,6 @@ runs:
         if [ -n "${{ inputs.docker-build-arg-file }}" ]; then
           arg_file_contents=$(cat "${{ inputs.docker-build-arg-file }}")
           build_arg="--build-arg $arg_file_contents"
-          printf 'Using build arg "%s" already exists' "${ECR_REPOSITORY_NAME}"
         fi
       
         docker build \
