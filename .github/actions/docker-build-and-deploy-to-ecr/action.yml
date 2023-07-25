@@ -43,8 +43,6 @@ runs:
           build_arg="--build-arg $arg_file_contents"
           printf 'Using build arg "%s" already exists' "${ECR_REPOSITORY_NAME}"
         fi
-        
-        printf 'Build arg "%s" built' "$build_arg"
       
         docker build \
         $build_arg \
