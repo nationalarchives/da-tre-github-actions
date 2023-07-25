@@ -1,4 +1,4 @@
-# Action to log in to AWS CodeArtifact; saves pip/pypi access URL to named file.
+# Action to log in to AWS CodeArtifact; saves pip/pypi access URL to named file.
 name: 'AWS CodeArtifact Repository Login'
 description: 'Log in to an AWS CodeArtifact repository'
 inputs:
@@ -18,6 +18,9 @@ inputs:
   aws-region:
     description: 'The AWS region in which the CodeArtifact repository resides'
     required: true
+  pip-url-output-file:
+    description: 'Name of file to which pip access URL will be written'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -33,4 +36,11 @@ runs:
           --output text \
         )"
 
-        echo "pip_index_url=https://${{ inputs.pypi-url-username }}:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" >> $GITHUB_ENV
+        echo "https://:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" \
+          > "${{ inputs.pip-url-output-file }}"
+
+        echo "Local file listing follows:"
+        ls -la
+
+        echo "SHA256 of pip-url-output-file follows:"
+        shasum -a 256 "${{ inputs.pip-url-output-file }}"

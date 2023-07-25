@@ -18,8 +18,8 @@ inputs:
   aws-region:
     description: 'AWS region'
     required: true
-  docker-build-arg:
-    description: 'Optional build arg to be used by docker'
+  docker-build-arg-file:
+    description: 'Optional file containing build arg to be used by docker'
     required: false
 runs:
   using: "composite"
@@ -39,7 +39,8 @@ runs:
         docker images
         build_arg=""
         if [ -n "${{ inputs.docker-build-arg }}" ]; then
-          build_arg="--build-arg ${{ inputs.docker-build-arg }} "
+          arg_file_contents=`cat {{ $inputs.docker-build-arg-file }}`
+          build_arg="--build-arg $arg_file_contents"
         fi
                 
         docker build \
