@@ -64,7 +64,7 @@ jobs:
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Save AWS CodeArtifact pip URL to file
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@feature/DTE-822-github-workflows-with-and-without-codeartifact
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url
         with:
           repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
           domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
@@ -72,7 +72,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           pip-url-output-file: ${{ inputs.pip_url_output_file }}
       - name: Build and push Docker image to AWS ECR
-        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@feature/DTE-822-github-workflows-with-and-without-codeartifact
+        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr
         with:
           dockerfile-dir: ${{ inputs.build_dir }}
           image-name: ${{ inputs.docker_image_name }}

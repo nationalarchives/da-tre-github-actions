@@ -21,7 +21,6 @@ inputs:
   pip-url-output-file:
     description: 'Name of file to which pip access URL will be written'
     required: true
-
 runs:
   using: "composite"
   steps:
