@@ -2,65 +2,93 @@
 # successful, tags git with new version.
 name: docker-build-and-ecr-deploy
 on:
-  workflow_call:
+  workflow_dispatch:
     # Define inputs to be passed from calling workflow
     inputs:
       # Name of created Docker image (version will be next git tag version)
       docker_image_name:
         type: string
-        required: true
+        default: 'hello'
       # Dockerfile's directory
       build_dir:
         type: string
-        required: true
+        default: '.'
       # ECR registry path (i.e. "foo" in "foo/docker-image-name")
       ecr_registry_path:
         type: string
         required: true
+        default: 'hello'
+      repository:
+        type: string
+        default: 'nationalarchives/tna-judgments-parser'
     # Define secrets to be passed from calling workflow
-    secrets:
-      AWS_OPEN_ID_CONNECT_ROLE_ARN:
-        required: true
-      AWS_REGION:
-        required: true
+    environment:
+      description: Github environment to use
+      type: string
+      required: true
 permissions:
   id-token: write  # required by aws-actions/configure-aws-credentials
   contents: write  # to push new git tag
 jobs:
-  build-deploy-and-tag-ecr-image:
+  check-latest:
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
-      - name: Diagnostic info
-        run: |
-          printf 'github.event.repository.name=%s\n' "${{ github.event.repository.name }}"
-          printf 'github.api_url=%s\n' "${{ github.api_url }}"
-          printf 'inputs.python_version=%s\n' "${{ inputs.python_version }}"
-      - name: Checkout current
-        uses: actions/checkout@v3
-      - name: Get the version to use to tag this build
-        id: build-tag
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.1
+      - name: Get latest repository tag
+        id: latest-repo-tag
+        uses: oprypin/find-latest-tag@v1
         with:
-          repo-name: ${{ github.event.repository.name }}
-      - name: Diagnostic info
-        run: |
-          printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
-      - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
-      - name: Build and push Docker image to AWS ECR
-        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.9
-        with:
-          dockerfile-dir: ${{ inputs.build_dir }}
-          image-name: ${{ inputs.docker_image_name }}
-          image-version: ${{ steps.build-tag.outputs.next-version }}
-          ecr-registry-path: ${{ inputs.ecr_registry_path }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Add Git tag for this build
-        run: |
-          git tag ${{ steps.build-tag.outputs.next-version }}
-          git push origin ${{ steps.build-tag.outputs.next-version }}
+        repository: ${{ inputs.ecr_repository }}  # The repository to scan.
+      - run: echo "Octokit is at version ${{ steps.latest-repo-tag.outputs.tag }}"
+#      - name: Setup AWS
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#        role-to-assume: ${{ vars.ROLE_ARN }}
+#        aws-region: eu-west-2
+#      - name: check
+#        uses: nationalarchives/da-tre-github-actions/.github/actions/get-latests-ecr-version
+#        with:
+#          ecr-registry-path: ${{ inputs.ecr_registry_path }}
+#          aws-region: eu-west-2
+#
+#
+#  aws-region:
+#    description: 'AWS region'
+#    required: true
+#  build-deploy-and-tag-ecr-image:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Diagnostic info
+#        run: |
+#          printf 'github.event.repository.name=%s\n' "${{ github.event.repository.name }}"
+#          printf 'github.api_url=%s\n' "${{ github.api_url }}"
+#          printf 'inputs.python_version=%s\n' "${{ inputs.python_version }}"
+#      - name: Checkout current
+#        uses: actions/checkout@v3
+#      - name: Get the version to use to tag this build
+#        id: build-tag
+#        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.1
+#        with:
+#          repo-name: ${{ github.event.repository.name }}
+#      - name: Diagnostic info
+#        run: |
+#          printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
+#      - name: AWS credential setup
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#          # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+#          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+#      - name: Build and push Docker image to AWS ECR
+#        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.9
+#        with:
+#          dockerfile-dir: ${{ inputs.build_dir }}
+#          image-name: ${{ inputs.docker_image_name }}
+#          image-version: ${{ steps.build-tag.outputs.next-version }}
+#          ecr-registry-path: ${{ inputs.ecr_registry_path }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#      - name: Add Git tag for this build
+#        run: |
+#          git tag ${{ steps.build-tag.outputs.next-version }}
+#          git push origin ${{ steps.build-tag.outputs.next-version }}

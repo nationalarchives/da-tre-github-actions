@@ -1,0 +1,29 @@
+# Action to get the next version number for a specified repository. An
+# optional version suffix can be supplied (e.g. "beta" for "1.2.3-beta")
+name: 'Get latest ECR version'
+description: 'Get the next version number after the latest git tag'
+inputs:
+  ecr-registry-path:
+    description: 'The path part of the repository name; i.e. the "alpha" in "alpha/docker-image-name"'
+    required: true
+  aws-region:
+    description: 'AWS region'
+    required: true
+outputs:
+  latest-version:
+    description: The latest version for the repository
+    value: ${{ steps.ecr-version.outputs.latest-version }}
+runs:
+  using: "composite"
+  steps:
+    - name: Get
+      id: ecr-version
+      uses: aws-actions/amazon-ecr-login@v1
+      run: |
+        if [[ $(aws ecr describe-repositories \
+        --region "${{ inputs.aws-region }}" \
+        --repository-names "${ECR_REPOSITORY_NAME}" \
+       ) ]]; then
+        printf 'Repository "%s" already exists' "${ECR_REPOSITORY_NAME}"
+        else
+        printf 'Creating repository "%s"' "${ECR_REPOSITORY_NAME}"
