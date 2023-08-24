@@ -18,7 +18,7 @@ on:
         type: string
         required: true
         default: 'hello'
-      repository:
+      ecr_repository:
         type: string
         default: 'nationalarchives/tna-judgments-parser'
     # Define secrets to be passed from calling workflow
