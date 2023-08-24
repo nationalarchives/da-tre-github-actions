@@ -1,55 +1,66 @@
-permissions:
-  id-token: write
-  contents: read
-# Controls when the workflow will run
+# Gets next git version tag, builds and deploys Docker image to ECR; if
+# successful, tags git with new version.
+name: docker-build-and-ecr-deploy
 on:
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  workflow_call:
+    # Define inputs to be passed from calling workflow
     inputs:
-      scm_vars_file:
-        description: Path of tfvars to use
-        required: true
+      # Name of created Docker image (version will be next git tag version)
+      docker_image_name:
         type: string
-        default: "hello"
-      repository_name:
-        description: name of repository
         required: true
+      # Dockerfile's directory
+      build_dir:
         type: string
-        default: "nationalarchives/tna-judgments-parser"
+        required: true
+      # ECR registry path (i.e. "foo" in "foo/docker-image-name")
       ecr_registry_path:
         type: string
         required: true
-        default: "lambda_functions/tre-run-judgment-parser"
-      environment:
-        type: string
+    # Define secrets to be passed from calling workflow
+    secrets:
+      AWS_OPEN_ID_CONNECT_ROLE_ARN:
         required: true
-        default: "test"
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+      AWS_REGION:
+        required: true
+permissions:
+  id-token: write  # required by aws-actions/configure-aws-credentials
+  contents: write  # to push new git tag
 jobs:
-
-  # This workflow contains a single job called "build"
-  check_version:
-    # environment: ${{ inputs.environment }}
-    # The type of runner that the job will run on
+  build-deploy-and-tag-ecr-image:
     runs-on: ubuntu-latest
-    name: Check version
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks latest tag in repository
-      - name: Get latest repository tag
-        uses: oprypin/find-latest-tag@v1
-        id: latest_tag
+      - name: Diagnostic info
+        run: |
+          printf 'github.event.repository.name=%s\n' "${{ github.event.repository.name }}"
+          printf 'github.api_url=%s\n' "${{ github.api_url }}"
+          printf 'inputs.python_version=%s\n' "${{ inputs.python_version }}"
+      - name: Checkout current
+        uses: actions/checkout@v3
+      - name: Get the version to use to tag this build
+        id: build-tag
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.1
         with:
-          repository: ${{ inputs.repository_name }}
-      - run: |
-          echo "tna-judgments-parser is at version ${{ steps.latest_tag.outputs.tag }}"
-      - name: Get latest ecr
+          repo-name: ${{ github.event.repository.name }}
+      - name: Diagnostic info
+        run: |
+          printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
+      - name: AWS credential setup
         uses: aws-actions/configure-aws-credentials@v1
         with:
-            role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
-            aws-region: eu-west-2
-            role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
-      - run: |
-              aws ecr list-images \
-              --repository-name="lambda_functions/tre-run-judgment-parser" \
-              --filter tagStatus=TAGGED
+          role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+      - name: Build and push Docker image to AWS ECR
+        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.9
+        with:
+          dockerfile-dir: ${{ inputs.build_dir }}
+          image-name: ${{ inputs.docker_image_name }}
+          image-version: ${{ steps.build-tag.outputs.next-version }}
+          ecr-registry-path: ${{ inputs.ecr_registry_path }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Add Git tag for this build
+        run: |
+          git tag ${{ steps.build-tag.outputs.next-version }}
+          git push origin ${{ steps.build-tag.outputs.next-version }}
