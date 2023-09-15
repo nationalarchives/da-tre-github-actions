@@ -5,16 +5,6 @@
 # If not deployed gets latest pushed ECR version
 # Check if the version should be deployed
 # Builds and pushes image version if required
-# Expects a var file from the file system and the name of a SSM param containing tf vars in JSON to download - these are passed in second and thus have the highest priority
-# terraform -detailed-exitcode flag is used.  This returns 2 if a plan detects changes.  If a plan has no changes the approval stage, artefacting and plan stage are skipped.
-# If a plan has changes and user has requested an apply, it will be stored as an artefact
-
-# USAGE
-# Environment Vars:
-#   ROLE_ARN = full arn of the role the runner should assume
-#   TERRAFORM_VERSION = Version of Terraform to use e.g. 1.4.6
-#   APPROVERS = a comma delimited string of GitHub users name who can approve the step
-# For parameters see the descriptions below
 
 
 name: Court Document Parser CI/CD
@@ -36,6 +26,9 @@ on:
         type: string
         required: true
         default: "tre-v2/tna-judgments-parser"
+      docker_file:
+        type: string 
+        required: false
 jobs:
   check_version:
     runs-on: ubuntu-latest
@@ -91,25 +84,23 @@ jobs:
          echo "image-name=$(cut -d'/' -f2 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
          echo "ecr-registry-path=$(cut -d'/' -f1 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
       - name: build and push 
-        id: hello
         run: |
            echo "ecr-registry-path ${{steps.registry.outputs.ecr-registry-path}} image-name ${{steps.registry.outputs.image-name}}" 
            echo "image-version ${{steps.latest_tag.outputs.tag}} docker-image-name ${{steps.registry.outputs.image-name}}" 
-      - name: login
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-           role-to-assume: ${{ inputs.aws-role }}
-           aws-region: eu-west-2
-           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
-      - name: do all 
-        uses: ian-hoyle/tre-learning/actions/docker-build-and-deploy-to-ecr@v3.3
-        with:
-           ecr_registry_path: "${{steps.registry.outputs.ecr-registry-path}}" 
-           aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}" 
-           docker-file:  "TRE/DockerfileV2"
-           dockerfile-dir: "."
-           image-name: "${{steps.registry.outputs.image-name}}"
-           aws-region: "eu-west-2"
+      # - name: login
+      #   uses: aws-actions/configure-aws-credentials@v3
+      #   with:
+      #      role-to-assume: ${{ inputs.aws-role }}
+      #      aws-region: eu-west-2
+      #      role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+      # - name: build and push 
+      #   uses: ian-hoyle/tre-learning/docker-build-and-deploy-to-ecr@v3.4
+      #   with:
+      #      ecr_registry_path: "${{steps.registry.outputs.ecr-registry-path}}" 
+      #      docker-file:  "${{inputs.docker_file}}"
+      #      dockerfile-dir: "."
+      #      image-name: "${{steps.registry.outputs.image-name}}"
+      #      aws-region: "eu-west-2"
           
       
         
