@@ -1,3 +1,4 @@
+name: Court Document Parser CI/CD
 # A workflow to build and release latest code in container to AWS ECR
 # The latest tag is retrieved from the GitHub repository
 # Checks if the ECR exists and creates if required
@@ -5,10 +6,6 @@
 # If not deployed gets latest pushed ECR version
 # Check if the version should be deployed
 # Builds and pushes image version if required
-
-
-name: Court Document Parser CI/CD
-
 permissions:
   id-token: write
   contents: read
