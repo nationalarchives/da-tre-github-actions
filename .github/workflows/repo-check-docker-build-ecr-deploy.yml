@@ -1,7 +1,28 @@
+# A workflow to build and release latest code in container to AWS ECR
+# The latest tag is retrieved from the GitHub repository
+# Checks if the ECR exists and creates if required
+# Checks to see if version has been deployed (a version in ECR has same tag as latest from GitHub
+# If not deployed gets latest pushed ECR version
+# Check if the version should be deployed
+# Builds and pushes image version if required
+# Expects a var file from the file system and the name of a SSM param containing tf vars in JSON to download - these are passed in second and thus have the highest priority
+# terraform -detailed-exitcode flag is used.  This returns 2 if a plan detects changes.  If a plan has no changes the approval stage, artefacting and plan stage are skipped.
+# If a plan has changes and user has requested an apply, it will be stored as an artefact
+
+# USAGE
+# Environment Vars:
+#   ROLE_ARN = full arn of the role the runner should assume
+#   TERRAFORM_VERSION = Version of Terraform to use e.g. 1.4.6
+#   APPROVERS = a comma delimited string of GitHub users name who can approve the step
+# For parameters see the descriptions below
 
 
-name: repo-check-docker-build-ecr-deploy
+name: Court Document Parser CI/CD
 
+permissions:
+  id-token: write
+  contents: read
+# Controls when the workflow will run
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -10,3 +31,99 @@ on:
         description: name of repository
         required: true
         type: string
+        default: "nationalarchives/tna-judgments-parser"
+      ecr_registry_path:
+        type: string
+        required: true
+        default: "tre-v2/tna-judgments-parser"
+jobs:
+  check_version:
+    runs-on: ubuntu-latest
+    name: Build and Deploy latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks latest tag in repository
+      - name: Get latest repository tag
+        uses: oprypin/find-latest-tag@v1
+        id: latest_tag
+        with:
+          repository: ${{ inputs.repository_name }}
+      # The repo must exist before it can be checked    
+      - name: create ecr repo if required
+        id: create-ecr-repo
+        uses: ian-hoyle/tre-learning/create-ecr-repository@v3.3
+        with:
+          ecr_registry_path: "${{inputs.ecr_registry_path}}"  
+          aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}" 
+      # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed    
+      - name: version deployed
+        id: deployed
+        uses: ian-hoyle/tre-learning/version-deployed@v3.3
+        with:
+          ecr_registry_path: "${{inputs.ecr_registry_path}}"  
+          new-tag: "2.1.31" 
+          aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}" 
+      # Exit if already deployed    
+      - name: stop if deployed    
+        run: |
+            echo "registry ${{inputs.ecr_registry_path}} created ${{steps.create-ecr-repo.outputs.created}}" 
+            if [ ${{steps.deployed.outputs.version-deployed}} == 1 ];  then exit 1; fi 
+      # Get latest pushed version      
+      - name: latest version 
+        id: latest-version-tag
+        uses: ian-hoyle/tre-learning/actions/latest-ecr-version@v3.2
+        with:
+          ecr_registry_path: "${{inputs.ecr_registry_path}}"  
+          aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}" 
+      - name: ok to update
+        id: update_okay
+        uses: ian-hoyle/tre-learning/actions/update-allowed@v3.2
+        with:
+         current-tag: "${{steps.latest-version-tag.outputs.latest-version}}"  
+         new-tag: "${{steps.latest_tag.outputs.tag}}"       
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          repository: nationalarchives/tna-judgments-parser@DTE-828-parser-deploy 
+      - name: split registry  
+        id: registry
+        run: |
+         echo "image-name=$(cut -d'/' -f2 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
+         echo "ecr-registry-path=$(cut -d'/' -f1 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
+      - name: build and push 
+        id: hello
+        run: |
+           echo "ecr-registry-path ${{steps.registry.outputs.ecr-registry-path}} image-name ${{steps.registry.outputs.image-name}}" 
+           echo "image-version ${{steps.latest_tag.outputs.tag}} docker-image-name ${{steps.registry.outputs.image-name}}" 
+      - name: login
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+           role-to-assume: ${{ inputs.aws-role }}
+           aws-region: eu-west-2
+           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+      - name: do all 
+        uses: ian-hoyle/tre-learning/actions/docker-build-and-deploy-to-ecr@v3.3
+        with:
+           ecr_registry_path: "${{steps.registry.outputs.ecr-registry-path}}" 
+           aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}" 
+           docker-file:  "TRE/DockerfileV2"
+           dockerfile-dir: "."
+           image-name: "${{steps.registry.outputs.image-name}}"
+           aws-region: "eu-west-2"
+          
+      
+        
+           
+                  
+        
+        
+           
+            
+           
+               
+             
+     
+           
+
+           
+           
