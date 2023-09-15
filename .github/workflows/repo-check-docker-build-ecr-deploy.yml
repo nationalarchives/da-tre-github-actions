@@ -29,6 +29,7 @@ on:
       docker_file:
         type: string 
         required: false
+        default: "TRE/DockerfileV2"
 jobs:
   check_version:
     runs-on: ubuntu-latest
@@ -77,7 +78,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          repository: nationalarchives/tna-judgments-parser@DTE-828-parser-deploy 
+          repository: nationalarchives/tna-judgments-parser
       - name: split registry  
         id: registry
         run: |
