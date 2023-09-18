@@ -53,7 +53,7 @@ jobs:
         uses: nationalarchives/da-tre-github-actions/version-deployed@0.0.10
         with:
           ecr_registry_path: "${{inputs.ecr_registry_path}}"
-          new-tag: "2.1.31"
+          new-tag: "${{steps.latest_tag.outputs.tag}}"
           aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
       # Exit if already deployed
       - name: stop if deployed
