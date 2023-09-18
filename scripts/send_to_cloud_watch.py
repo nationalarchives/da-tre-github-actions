@@ -82,7 +82,6 @@ def send_to_cloud_watch(
 
 
 if __name__ == "__main__":
-
     # Get the args
     parser = argparse.ArgumentParser(description="Send entry to Cloud Watch")
     parser.add_argument(
