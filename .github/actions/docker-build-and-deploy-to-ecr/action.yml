@@ -6,6 +6,9 @@ inputs:
   dockerfile-dir:
     description: 'The directory containing the Docker file to build; e.g. "build-dir"'
     required: true
+  docker-file:
+      description: 'Optional path to Dockerfile'
+      required: false
   image-name:
     description: 'The name of the Docker image to push; e.g. "some-image"'
     required: true
@@ -42,7 +45,10 @@ runs:
           pip_index_file_contents=$(cat "${{ inputs.pip-index-file }}")
           build_arg="--build-arg PIP_INDEX_URL=$pip_index_file_contents"
         fi
-      
+
+        if [ -n "${{ inputs.docker-file }}" ]; then
+           build_arg+=" -f ${{ inputs.docker-file }}"
+        fi
         docker build \
         $build_arg \
         --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
