@@ -95,6 +95,7 @@ jobs:
            dockerfile-dir: "."
            image-name: "${{steps.registry.outputs.image-name}}"
            aws-region: "eu-west-2"
+           image-version: "${{steps.latest_tag.outputs.tag}}"
           
       
         
