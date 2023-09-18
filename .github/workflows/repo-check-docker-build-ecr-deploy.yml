@@ -90,7 +90,7 @@ jobs:
       - name: build and push 
         uses: ian-hoyle/tre-learning/docker-build-and-deploy-to-ecr@v3.4
         with:
-           ecr_registry_path: "${{steps.registry.outputs.ecr-registry-path}}" 
+           ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}" 
            docker-file:  "${{inputs.docker_file}}"
            dockerfile-dir: "."
            image-name: "${{steps.registry.outputs.image-name}}"
