@@ -88,7 +88,7 @@ jobs:
            aws-region: eu-west-2
            role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: build and push 
-        uses: ian-hoyle/tre-learning/docker-build-and-deploy-to-ecr@v3.9.7.3
+        uses: ian-hoyle/tre-learning/docker-build-and-deploy-to-ecr@v3.9.7.4
         with:
            ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}" 
            docker-file:  "${{inputs.docker_file}}"
