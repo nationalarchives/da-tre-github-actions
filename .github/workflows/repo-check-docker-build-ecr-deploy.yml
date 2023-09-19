@@ -50,7 +50,7 @@ jobs:
       # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
       - name: version deployed
         id: deployed
-        uses: ian-hoyle/tre-learning/version-deployed@v4.1
+        uses: ian-hoyle/tre-learning/version-deployed@v4.3
         with:
           ecr_registry_path: "${{inputs.ecr_registry_path}}"
           new-tag: "${{steps.latest_tag.outputs.tag}}"
