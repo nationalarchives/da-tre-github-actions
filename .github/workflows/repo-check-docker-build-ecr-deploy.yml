@@ -64,7 +64,7 @@ jobs:
       # Get latest pushed version
       - name: latest version
         id: latest-ecr-version-tag
-        uses: nationalarchives/da-tre-github-actions/latest-ecr-version@0.0.10
+        uses: ian-hoyle/tre-learning/latest-ecr-version@v4.2
         with:
           ecr_registry_path: "${{inputs.ecr_registry_path}}"
           aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
