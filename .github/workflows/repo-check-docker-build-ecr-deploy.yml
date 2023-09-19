@@ -50,7 +50,7 @@ jobs:
       # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
       - name: version deployed
         id: deployed
-        uses: nationalarchives/da-tre-github-actions/version-deployed@0.0.10
+        uses: ian-hoyle/tre-learning/version-deployed@v4.1
         with:
           ecr_registry_path: "${{inputs.ecr_registry_path}}"
           new-tag: "${{steps.latest_tag.outputs.tag}}"
@@ -59,7 +59,8 @@ jobs:
       - name: stop if deployed
         run: |
             echo "registry ${{inputs.ecr_registry_path}} created ${{steps.create-ecr-repo.outputs.created}}"
-            if [ ${{steps.deployed.outputs.version-deployed}} == 1 ];  then exit 1; fi
+            echo "version ${{steps.latest_tag.outputs.tag} deployed  ${{steps.deployed.outputs.version-deployed}}"
+            if [ ${{steps.deployed.outputs.version-deployed}} -eq 1 ];  then exit 1; fi
       # Get latest pushed version
       - name: latest version
         id: latest-ecr-version-tag
