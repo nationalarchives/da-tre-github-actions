@@ -59,7 +59,7 @@ jobs:
       - name: stop if deployed
         run: |
             echo "registry ${{inputs.ecr_registry_path}} created ${{steps.create-ecr-repo.outputs.created}}"
-            echo "version ${{steps.latest_tag.outputs.tag} deployed  ${{steps.deployed.outputs.version-deployed}}"
+            echo "version ${{steps.latest_tag.outputs.tag}} deployed  ${{steps.deployed.outputs.version-deployed}}"
             if [ ${{steps.deployed.outputs.version-deployed}} -eq 1 ];  then exit 1; fi
       # Get latest pushed version
       - name: latest version
