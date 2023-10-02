@@ -64,7 +64,7 @@ jobs:
       # Get the latest pushed version
       - name: latest version
         id: latest-ecr-version-tag
-        uses: ian-hoyle/tre-learning/latest-ecr-version@5.1
+        uses: ian-hoyle/tre-learning/latest-ecr-version@5.3
         with:
           ecr_registry_path: "${{inputs.ecr_registry_path}}"
           aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
