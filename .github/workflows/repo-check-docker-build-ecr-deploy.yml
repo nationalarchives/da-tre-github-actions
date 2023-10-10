@@ -77,7 +77,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          repository: ${{inputs.ecr_registry_path}})
+          repository: ${{ inputs.repository_name }}
+          ref: 'main'
       # This workflow takes a registry path tre_v2/image_name  the must be split for docker build action
       - name: Split registry
         id: registry
