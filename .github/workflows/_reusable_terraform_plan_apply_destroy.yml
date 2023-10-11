@@ -38,6 +38,11 @@ on:
         description: Name of param to download for additional vars
         required: true
         type: string
+      run_system_tests:
+        description: Run system tests?
+        required: false
+        type: boolean
+        default: false
       needs_approval:
         description: set to raise a manual approval after plan
         type: boolean
@@ -110,6 +115,18 @@ jobs:
         run: |
           terraform apply -input=false -auto-approve tfplan.out
           echo "### Deployed $(git log -1 '--format=format:%H') to ${{ inputs.workspace }} :tada:" >> $GITHUB_STEP_SUMMARY
+      - name: Get environment name for systems tests
+        if: inputs.run.system_tests == true
+        run: |
+          TESTING_ENVIRONMENT=$(jq -r '.environment_name' ssm.tfvars.json)
+          echo "TESTING_ENVIRONMENT=$TESTING_ENVIRONMENT" >> $GITHUB_ENV
+      - name: Run system tests
+        if: inputs.run.system_tests == true
+        uses: nationalarchives/da-tre-system-testing/.github/workflows/reusable_run_sbt_test_in_aws.yml
+        with:
+          environment: ${{ inputs.environment }}
+          git_ref: ${{ inputs.ref }}
+          testing_environment: $TESTING_ENVIRONMENT
       - name: Terraform Destroy Plan
         if: ${{ inputs.run_destroy }}
         run: |
