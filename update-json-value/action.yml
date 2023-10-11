@@ -1,0 +1,53 @@
+  name: 'Update-json-value'
+  description: Updates and commits a json value to a branch
+  inputs:
+    file_name:
+      type: string
+      required: true
+    field:
+      type: string
+      required: true
+    value:
+      type: string
+      required: true
+    github_token:
+      type: string
+      required: true
+  outputs:
+    branch:
+      description: branch name containing updated values
+      value: ${{ steps.file_commit.outputs.branch }}
+  runs:
+    using: composite
+    steps:
+      - name: create_branch
+        id: create_branch
+        uses: peterjgrainger/action-create-branch@v2.2.0
+        env:
+          GITHUB_TOKEN: ${{ inputs.github_token }}
+        with:
+          branch: update_json_${{ inputs.field }}
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: update_json_${{ inputs.field }}
+      - name: Update json-values description
+        uses: jossef/action-set-json-field@v2.1
+        with:
+           file: "${{ inputs.file_name }}"
+           field: "${{ inputs.field}}"
+           value: "${{ inputs.value }}"
+      - name: Commit files
+        id: file_commit
+        shell: bash
+        run: |
+         git config --local user.email "action@github.com"
+         git config --local user.name "GitHub Action"
+         git add -A
+         git commit -m "updating ${{ inputs.field }} with ${{ inputs.value }}"
+         echo "branch=update_json_${{ inputs.field }}" >> $GITHUB_OUTPUT
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+         github_token: ${{ inputs.github_token }}
+         branch: update_json_${{ inputs.field }}
