@@ -59,6 +59,10 @@ on:
     secrets:
       TESTING_PRIVATE_KEY:
         required: true
+      TESTING_SOURCE_ROLE:
+        required: true
+      TESTING_TARGET_ROLE:
+        required: true
 jobs:
   terraform:
     environment: ${{ inputs.environment }}
@@ -127,7 +131,7 @@ jobs:
         uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@DTE-811-system-testing
         with:
           source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
-          target_role: ${{ secrets.TESTING_PREPROD_TARGET_ROLE }}
+          target_role: ${{ secrets.TESTING_TARGET_ROLE }}
           testing_ssh_key: ${{ secrets.TESTING_PRIVATE_KEY }}
       - name: Terraform Destroy Plan
         if: ${{ inputs.run_destroy }}
