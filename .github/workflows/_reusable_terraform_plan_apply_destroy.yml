@@ -56,6 +56,9 @@ on:
         description: Run system tests?
         type: boolean
         default: false
+    secrets:
+      TESTING_PRIVATE_KEY:
+        required: true
 jobs:
   terraform:
     environment: ${{ inputs.environment }}

@@ -7,6 +7,7 @@ inputs:
     description: The testing role for the management role to assume
   testing_ssh_key:
     description: SSH key for checking out systems testing repo
+    required: true
 runs:
   using: "composite"
   steps:
