@@ -52,6 +52,10 @@ on:
         description: Run terraform destroy?
         type: boolean
         default: false
+      run_system_tests:
+        description: Run system tests?
+        type: boolean
+        default: false
 jobs:
   terraform:
     environment: ${{ inputs.environment }}
@@ -110,6 +114,19 @@ jobs:
         run: |
           terraform apply -input=false -auto-approve tfplan.out
           echo "### Deployed $(git log -1 '--format=format:%H') to ${{ inputs.workspace }} :tada:" >> $GITHUB_STEP_SUMMARY
+      - name: Get environment name for systems tests
+        if: inputs.run.system_tests == true
+        run: |
+          TESTING_ENVIRONMENT=$(jq -r '.environment_name' ssm.tfvars.json)
+          echo "TESTING_ENVIRONMENT=$TESTING_ENVIRONMENT" >> $GITHUB_ENV
+      - name: Run system tests
+        if: inputs.run.system_tests == true
+        uses: nationalarchives/da-tre-github-actions/.github/workflows/run-system-tests@0.0.1
+        with:
+          environment: ${{ inputs.environment }}
+          testing_environment: pte-ah
+          source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
+          target_role: ${{ secrets.TESTING_PREPROD_TARGET_ROLE }}
       - name: Terraform Destroy Plan
         if: ${{ inputs.run_destroy }}
         run: |
