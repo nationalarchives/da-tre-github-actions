@@ -48,7 +48,7 @@ runs:
       uses: nationalarchives/da-tre-github-actions/create-ecr-repository@0.0.10
       with:
         ecr_registry_path: "${{inputs.ecr_registry_path}}"
-        aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
+        aws-role: "${{ inputs.aws_role }}"
     # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
     - name: version deployed
       id: deployed
