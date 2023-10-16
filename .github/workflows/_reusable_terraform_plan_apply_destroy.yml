@@ -125,6 +125,7 @@ jobs:
         with:
           source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
           target_role: ${{ secrets.TESTING_PREPROD_TARGET_ROLE }}
+          testing_ssh_key: ${{ secrets.TESTING_PRIVATE_KEY }}
       - name: Terraform Destroy Plan
         if: ${{ inputs.run_destroy }}
         run: |
