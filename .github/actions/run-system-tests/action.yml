@@ -11,26 +11,35 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - uses: aws-actions/configure-aws-credentials@v3
+  - name: 'Configure AWS credentials for source role'
+    uses: aws-actions/configure-aws-credentials@v3
     with:
       role-to-assume: ${{ inputs.source_role }}
       aws-region: eu-west-2
-  - uses: aws-actions/configure-aws-credentials@v3
+  - name: 'Get caller identity' 
+    run:  aws sts get-caller-identity
+    shell: bash      
+  - name: 'Configure AWS credentials for target role' 
+    uses: aws-actions/configure-aws-credentials@v3
     with:
       role-to-assume: ${{ inputs.target_role }}
       aws-region: eu-west-2
       role-chaining: true
       role-skip-session-tagging: true
-  - run:  aws sts get-caller-identity
+  - name: 'Get caller identity'
+    run:  aws sts get-caller-identity
     shell: bash
-  - uses: actions/checkout@v3
+  - name: 'Checkout system testing repo'  
+    uses: actions/checkout@v3
     with:
       ssh-key: ${{ inputs.testing_ssh_key }}
       repository: nationalarchives/da-tre-system-testing
       ref: main
-  - run: ls -lR
+  - name: 'List directories'      
+    run: ls -lR
     shell: bash
-  - uses: coursier/setup-action@v1
+  - name: 'Run system tests'  
+    uses: coursier/setup-action@v1
   - run: sbt test
     shell: bash
     env:
