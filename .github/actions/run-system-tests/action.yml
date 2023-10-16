@@ -23,6 +23,8 @@ runs:
       aws-region: eu-west-2
       role-chaining: true
       role-skip-session-tagging: true
+  - run:  echo ${{ inputs.testing_private_key }}    
+    shell: bash
   - run:  aws sts get-caller-identity
     shell: bash
   - uses: actions/checkout@v3
