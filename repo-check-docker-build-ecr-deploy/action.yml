@@ -24,6 +24,10 @@ inputs:
     type: string
     required: false
     default: "TRE/DockerfileV2"
+  aws_role:
+    type: string
+    required: true
+
 outputs:
   version:
     description: version to update
@@ -52,7 +56,7 @@ runs:
       with:
         ecr_registry_path: "${{inputs.ecr_registry_path}}"
         new-tag: "${{steps.latest_tag.outputs.tag}}"
-        aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
+        aws-role: "${{ inputs.aws_role }}"
     # Exit if already deployed
     - name: stop if deployed
       run: |
