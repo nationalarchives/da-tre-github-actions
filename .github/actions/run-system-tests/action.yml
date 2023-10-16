@@ -29,6 +29,7 @@ runs:
     with:
       repository: nationalarchives/da-tre-system-testing
       ssh-key: ${{ inputs.testing_private_key }}
+      ref: main
   - run: ls -lR
     shell: bash
   - uses: coursier/setup-action@v1
