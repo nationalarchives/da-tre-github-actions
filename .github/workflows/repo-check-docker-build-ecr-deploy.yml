@@ -6,9 +6,9 @@ name: Court Document Parser CI/CD
 # If not deployed gets the latest pushed ECR version
 # Check if the version should be deployed
 # Builds and pushes image version if required
-permissions:
-  id-token: write
-  contents: read
+#permissions:
+#  id-token: write
+#  contents: read
 # Controls when the workflow will run
 on:
    workflow_call:
