@@ -11,9 +11,7 @@ permissions:
   contents: read
 # Controls when the workflow will run
 on:
-  # Allows you to run this workflow manually from the Actions tab
-  # This will be run on a workflow_call when it is decided where the code should exist or maybe a chron
-  workflow_dispatch:
+   workflow_call:
     inputs:
       repository_name:
         description: name of repository
