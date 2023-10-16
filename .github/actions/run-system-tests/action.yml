@@ -1,15 +1,10 @@
 name: 'Run system tests'
 description: 'Run system tests for environment'
 inputs:
-  environment:
-    description: Github environment to use
-    required: true
   source_role:
     description: The management role for the action to assume
   target_role:
     description: The testing role for the management role to assume
-  testing_private_key:
-    description: Key to checkout systems testing repo
 runs:
   using: "composite"
   steps:
@@ -27,7 +22,7 @@ runs:
     shell: bash
   - uses: actions/checkout@v3
     with:
-      ssh-key: annie
+      ssh-key: ${{ secrets.TESTING_PRIVATE_KEY }}
       repository: nationalarchives/da-tre-system-testing
       ref: main
   - run: ls -lR

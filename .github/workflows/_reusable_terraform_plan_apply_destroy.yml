@@ -123,10 +123,8 @@ jobs:
         if: inputs.run_system_tests == true
         uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@DTE-811-system-testing
         with:
-          environment: ${{ inputs.environment }}
           source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
           target_role: ${{ secrets.TESTING_PREPROD_TARGET_ROLE }}
-          testing_private_key: ${{ secrets.TESTING_PRIVATE_KEY }}
       - name: Terraform Destroy Plan
         if: ${{ inputs.run_destroy }}
         run: |
