@@ -8,12 +8,8 @@ inputs:
     description: The management role for the action to assume
   target_role:
     description: The testing role for the management role to assume
-  testing_environment:
-    description: The prefix for the environment you would like to test in
 runs:
   using: "composite"
-  env:
-    ENV: ${{ inputs.testing_environment }}
   steps:
   - uses: aws-actions/configure-aws-credentials@v2
     with:
@@ -33,3 +29,5 @@ runs:
   - run: ls -lR
   - uses: coursier/setup-action@v1
   - run: sbt test
+    env:
+      ENV: pte-ah
