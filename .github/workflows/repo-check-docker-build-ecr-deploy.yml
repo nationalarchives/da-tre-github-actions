@@ -26,6 +26,12 @@ on:
         type: string
         required: false
         default: "TRE/DockerfileV2"
+    secrets:
+      AWS_OPEN_ID_CONNECT_ROLE_ARN:
+        type: string
+        required: false
+
+
 jobs:
   check_version_build_deploy:
     runs-on: ubuntu-latest
@@ -44,7 +50,7 @@ jobs:
         uses: nationalarchives/da-tre-github-actions/create-ecr-repository@DTE-832-call-not-dispatch
         with:
           ecr_registry_path: "${{inputs.ecr_registry_path}}"
-          aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
+          aws-role: "${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
       # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
       - name: version deployed
         id: deployed
@@ -52,7 +58,8 @@ jobs:
         with:
           ecr_registry_path: "${{inputs.ecr_registry_path}}"
           new-tag: "${{steps.latest_tag.outputs.tag}}"
-          aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
+        secrets:
+          aws-role: "${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
       # Exit if already deployed
       - name: stop if deployed
         run: |
