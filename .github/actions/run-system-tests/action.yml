@@ -8,6 +8,9 @@ inputs:
   testing_ssh_key:
     description: SSH key for checking out systems testing repo
     required: true
+  environment_name:
+    description: The prefix for the environment infrastructure to test on
+    required: true
 runs:
   using: "composite"
   steps:
@@ -43,4 +46,4 @@ runs:
   - run: sbt test
     shell: bash
     env:
-      ENV: $TESTING_ENVIRONMENT
+      ENV: ${{ inputs.environment_name }}
