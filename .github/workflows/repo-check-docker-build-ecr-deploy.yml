@@ -41,7 +41,7 @@ jobs:
       # The repo must exist before it can be checked
       - name: create ecr repo if required
         id: create-ecr-repo
-        uses: nationalarchives/da-tre-github-actions/create-ecr-repository@0.0.10
+        uses: nationalarchives/da-tre-github-actions/create-ecr-repository@DTE-832-call-not-dispatch
         with:
           ecr_registry_path: "${{inputs.ecr_registry_path}}"
           aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
