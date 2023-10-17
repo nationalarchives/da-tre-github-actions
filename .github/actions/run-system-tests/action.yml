@@ -43,4 +43,4 @@ runs:
   - run: sbt test
     shell: bash
     env:
-      ENV: pte-ah
+      ENV: $TESTING_ENVIRONMENT
