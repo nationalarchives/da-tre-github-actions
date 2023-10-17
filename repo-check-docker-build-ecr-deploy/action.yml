@@ -42,65 +42,65 @@ runs:
       id: latest_tag
       with:
         repository: ${{ inputs.repository_name }}
-    # The repo must exist before it can be checked
-    - name: create ecr repo if required
-      id: create-ecr-repo
-      uses: nationalarchives/da-tre-github-actions/create-ecr-repository@0.0.10
-      with:
-        ecr_registry_path: "${{inputs.ecr_registry_path}}"
-        aws-role: "${{ inputs.aws_role }}"
-    # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
-    - name: version deployed
-      id: deployed
-      uses: nationalarchives/da-tre-github-actions/version-deployed@0.0.11
-      with:
-        ecr_registry_path: "${{inputs.ecr_registry_path}}"
-        new-tag: "${{steps.latest_tag.outputs.tag}}"
-        aws-role: "${{ inputs.aws_role }}"
-    # Exit if already deployed
-    - name: stop if deployed
-      shell: bash
-      run: |
-          echo "registry ${{inputs.ecr_registry_path}} created ${{steps.create-ecr-repo.outputs.created}}"
-          echo "version ${{steps.latest_tag.outputs.tag}} deployed  ${{steps.deployed.outputs.version-deployed}}"
-          if [ ${{steps.deployed.outputs.version-deployed}} -eq 1 ];  then exit 1; fi
-    # Get the latest pushed version
-    - name: latest version
-      id: latest-ecr-version-tag
-      uses: nationalarchives/da-tre-github-actions/latest-ecr-version@0.0.12
-      with:
-        ecr_registry_path: "${{inputs.ecr_registry_path}}"
-        aws-role: "${{ inputs.aws_role }}"
-    - name: ok to update
-      id: update_okay
-      uses: nationalarchives/da-tre-github-actions/update-allowed@0.0.10
-      with:
-       current-tag: "${{steps.latest-ecr-version-tag.outputs.latest-version}}"
-       new-tag: "${{steps.latest_tag.outputs.tag}}"
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ inputs.repository_name }}
-        ref: 'main'
-    # This workflow takes a registry path tre_v2/image_name  the must be split for docker build action
-    - name: Split registry
-      id: registry
-      shell: bash
-      run: |
-       echo "image-name=$(cut -d'/' -f2 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
-       echo "ecr-registry-path=$(cut -d'/' -f1 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
-    - name: login
-      uses: aws-actions/configure-aws-credentials@v3
-      with:
-         role-to-assume: ${{ inputs.aws-role }}
-         aws-region: eu-west-2
-         role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
-    - name: build and push
-      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.10
-      with:
-         ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}"
-         docker-file:  "${{inputs.docker_file}}"
-         dockerfile-dir: "."
-         image-name: "${{steps.registry.outputs.image-name}}"
-         aws-region: "eu-west-2"
-         image-version: "${{steps.latest_tag.outputs.tag}}"
+#    # The repo must exist before it can be checked
+#    - name: create ecr repo if required
+#      id: create-ecr-repo
+#      uses: nationalarchives/da-tre-github-actions/create-ecr-repository@0.0.10
+#      with:
+#        ecr_registry_path: "${{inputs.ecr_registry_path}}"
+#        aws-role: "${{ inputs.aws_role }}"
+#    # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
+#    - name: version deployed
+#      id: deployed
+#      uses: nationalarchives/da-tre-github-actions/version-deployed@0.0.11
+#      with:
+#        ecr_registry_path: "${{inputs.ecr_registry_path}}"
+#        new-tag: "${{steps.latest_tag.outputs.tag}}"
+#        aws-role: "${{ inputs.aws_role }}"
+#    # Exit if already deployed
+#    - name: stop if deployed
+#      shell: bash
+#      run: |
+#          echo "registry ${{inputs.ecr_registry_path}} created ${{steps.create-ecr-repo.outputs.created}}"
+#          echo "version ${{steps.latest_tag.outputs.tag}} deployed  ${{steps.deployed.outputs.version-deployed}}"
+#          if [ ${{steps.deployed.outputs.version-deployed}} -eq 1 ];  then exit 1; fi
+#    # Get the latest pushed version
+#    - name: latest version
+#      id: latest-ecr-version-tag
+#      uses: nationalarchives/da-tre-github-actions/latest-ecr-version@0.0.12
+#      with:
+#        ecr_registry_path: "${{inputs.ecr_registry_path}}"
+#        aws-role: "${{ inputs.aws_role }}"
+#    - name: ok to update
+#      id: update_okay
+#      uses: nationalarchives/da-tre-github-actions/update-allowed@0.0.10
+#      with:
+#       current-tag: "${{steps.latest-ecr-version-tag.outputs.latest-version}}"
+#       new-tag: "${{steps.latest_tag.outputs.tag}}"
+#    - name: Checkout
+#      uses: actions/checkout@v2
+#      with:
+#        repository: ${{ inputs.repository_name }}
+#        ref: 'main'
+#    # This workflow takes a registry path tre_v2/image_name  the must be split for docker build action
+#    - name: Split registry
+#      id: registry
+#      shell: bash
+#      run: |
+#       echo "image-name=$(cut -d'/' -f2 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
+#       echo "ecr-registry-path=$(cut -d'/' -f1 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
+#    - name: login
+#      uses: aws-actions/configure-aws-credentials@v3
+#      with:
+#         role-to-assume: ${{ inputs.aws-role }}
+#         aws-region: eu-west-2
+#         role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+#    - name: build and push
+#      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.10
+#      with:
+#         ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}"
+#         docker-file:  "${{inputs.docker_file}}"
+#         dockerfile-dir: "."
+#         image-name: "${{steps.registry.outputs.image-name}}"
+#         aws-region: "eu-west-2"
+#         image-version: "${{steps.latest_tag.outputs.tag}}"
