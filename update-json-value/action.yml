@@ -28,7 +28,7 @@
     steps:
       - name: create_branch
         id: create_branch
-        uses: peterjgrainger/action-create-branch@v2.2.0
+        uses: peterjgrainger/action-create-branch@v2.4.0
         env:
           GITHUB_TOKEN: ${{ inputs.github_token }}
         with:
@@ -45,7 +45,7 @@
            value: "${{ inputs.value }}"
       - name: Import GPG key
         id: import-gpg
-        uses: crazy-max/ghaction-import-gpg@v4
+        uses: crazy-max/ghaction-import-gpg@v6
         with:
             gpg_private_key: ${{ inputs.gpg_private_key }}
             passphrase: ${{ inputs.gpg_passphrase }}
