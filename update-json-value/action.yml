@@ -57,6 +57,7 @@
         run: |
          git config --global user.email "${{ steps.import-gpg.outputs.email }}"
          git config --global user.name "${{ steps.import-gpg.outputs.name }}"
+         pre-commit run --all-files
          git add -A
          git commit -m "updating ${{ inputs.field }} with ${{ inputs.value }}"
          echo "branch=${{ inputs.field }}_${{ inputs.value }}" >> $GITHUB_OUTPUT
