@@ -55,6 +55,9 @@
         uses: actions/setup-python@v3
       - name: pre-commit
         continue-on-error: true
+        run: |
+         git config --global user.email "${{ steps.import-gpg.outputs.email }}"
+         git config --global user.name "${{ steps.import-gpg.outputs.name }}"
         uses: pre-commit/action@v3.0.0
       - name: Commit files
         id: file_commit
