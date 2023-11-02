@@ -59,6 +59,7 @@
         run: |
          git config --global user.email "${{ steps.import-gpg.outputs.email }}"
          git config --global user.name "${{ steps.import-gpg.outputs.name }}"
+         pip install pre-commit
          pre-commit install
          pre-commit run --all-files
          git add -A
