@@ -51,8 +51,9 @@
             passphrase: ${{ inputs.gpg_passphrase }}
             git_user_signingkey: true
             git_commit_gpgsign: true
-      - name: pre-commit
+      - name: install python
         uses: actions/setup-python@v3
+      - name: pre-commit  
         uses: pre-commit/action@v3.0.0      
       - name: Commit files
         id: file_commit
