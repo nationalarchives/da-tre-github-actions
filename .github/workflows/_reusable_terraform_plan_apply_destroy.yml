@@ -133,7 +133,7 @@ jobs:
           echo "TESTING_ENVIRONMENT=$TESTING_ENVIRONMENT" >> $GITHUB_ENV
       - name: Run system tests
         if: inputs.run_system_tests == true
-        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@0.0.18
+        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@0.0.19
         with:
           source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
           target_role: ${{ secrets.TESTING_TARGET_ROLE }}
