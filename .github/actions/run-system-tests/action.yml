@@ -13,7 +13,7 @@ inputs:
     required: true
   system_test_tags:
     description: The tags of tests to run if provided
-    required: true
+    required: false
     default: ""
 runs:
   using: "composite"
