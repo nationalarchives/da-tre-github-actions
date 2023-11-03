@@ -26,8 +26,6 @@
   runs:
     using: composite
     steps:
-      - name: install python
-        uses: actions/setup-python@v3
       - name: create_branch
         id: create_branch
         uses: peterjgrainger/action-create-branch@v2.4.0
@@ -53,13 +51,8 @@
             passphrase: ${{ inputs.gpg_passphrase }}
             git_user_signingkey: true
             git_commit_gpgsign: true
-      - name: pre-commit
-        continue-on-error: true
-        shell: bash
-        run: |
-         pip install pre-commit
-         pre-commit install
-         pre-commit run --all-files
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v3.0.0
       - name: Commit files
         id: file_commit
         shell: bash
