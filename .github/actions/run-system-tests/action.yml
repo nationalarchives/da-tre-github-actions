@@ -19,10 +19,10 @@ runs:
     with:
       role-to-assume: ${{ inputs.source_role }}
       aws-region: eu-west-2
-  - name: 'Get caller identity' 
+  - name: 'Get caller identity'
     run:  aws sts get-caller-identity
-    shell: bash      
-  - name: 'Configure AWS credentials for target role' 
+    shell: bash
+  - name: 'Configure AWS credentials for target role'
     uses: aws-actions/configure-aws-credentials@v3
     with:
       role-to-assume: ${{ inputs.target_role }}
@@ -32,16 +32,16 @@ runs:
   - name: 'Get caller identity'
     run:  aws sts get-caller-identity
     shell: bash
-  - name: 'Checkout system testing repo'  
+  - name: 'Checkout system testing repo'
     uses: actions/checkout@v3
     with:
       ssh-key: ${{ inputs.testing_ssh_key }}
       repository: nationalarchives/da-tre-system-testing
       ref: main
-  - name: 'List directories'      
+  - name: 'List directories'
     run: ls -lR
     shell: bash
-  - name: 'Run system tests'  
+  - name: 'Run system tests'
     uses: coursier/setup-action@v1
   - run: sbt test
     shell: bash
