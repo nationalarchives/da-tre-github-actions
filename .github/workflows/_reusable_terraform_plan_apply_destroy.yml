@@ -56,6 +56,11 @@ on:
         description: Run system tests?
         type: boolean
         default: false
+      system_test_tags:
+        description: Tags for system tests
+        required: false
+        type: string
+        default: ""
     secrets:
       TESTING_PRIVATE_KEY:
         required: true
@@ -128,12 +133,13 @@ jobs:
           echo "TESTING_ENVIRONMENT=$TESTING_ENVIRONMENT" >> $GITHUB_ENV
       - name: Run system tests
         if: inputs.run_system_tests == true
-        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@DTE-811-system-testing
+        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@0.0.19
         with:
           source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
           target_role: ${{ secrets.TESTING_TARGET_ROLE }}
           testing_ssh_key: ${{ secrets.TESTING_PRIVATE_KEY }}
           environment_name: ${{ env.TESTING_ENVIRONMENT }}
+          system_test_tags: ${{ inputs.system_test_tags }}
       - name: Terraform Destroy Plan
         if: ${{ inputs.run_destroy }}
         run: |
