@@ -2,6 +2,9 @@ name: terraform-environments-action
 on:
   workflow_call:
     inputs:
+      github_environment:
+        type: string
+        required: true
       tre_environment:
         type: string
         required: true
@@ -19,7 +22,7 @@ on:
 
 env:
   TRE_ENV: ${{ inputs.tre_environment }}
-  LOG_GROUP_NAME: "tre-${{ inputs.github_environment }}-github-actions-logs"
+  LOG_GROUP_NAME: "tre-${{ inputs.tre_environment }}-github-actions-logs"
   LOG_STREAM_NAME: "${{ github.triggering_actor }}-${{ github.run_id }}-${{ github.run_attempt }}"
   AWS_PARAM_STORE_TF_BACKEND_KEY: ${{ secrets.AWS_PARAM_STORE_TF_BACKEND_KEY }}
   AWS_PARAM_STORE_TF_VARS_KEY: tre-${{ inputs.tre_environment }}-tfvars
@@ -72,7 +75,7 @@ jobs:
         run: |
           cat ./scripts/init.sh
           ./scripts/plan.sh
-      - name: Notify Sucess
+      - name: Notify Success
         if: success()
         run: |
           ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/plan.txt"
