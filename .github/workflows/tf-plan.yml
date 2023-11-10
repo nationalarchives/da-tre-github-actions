@@ -79,11 +79,11 @@ jobs:
         if: success()
         run: |
           ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/plan.txt"
-          echo "Plan available for <$CLOUDWATCH_LOGS_URL|terraform plan> in \`$TRE_ENV\`, requested by \`$TRIGGERING_ACTOR\`"
+          echo "Plan.txt sent to $CLOUDWATCH_LOGS_URL";
       - name: Notify Failure
         if: ${{ failure() }}
         run: |
           if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
             ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/error.txt";
-            echo "Error.txt send to $CLOUDWATCH_LOGS_URL";
+            echo "Error.txt sent to $CLOUDWATCH_LOGS_URL";
           fi
