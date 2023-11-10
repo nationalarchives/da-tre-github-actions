@@ -1,0 +1,86 @@
+name: terraform-environments-action
+on:
+  workflow_call:
+    inputs:
+      tre_environment:
+        type: string
+        required: true
+      tf_dir:
+        type: string
+        required: true
+      github_action_ref:
+        type: string
+        required: true
+    secrets:
+      ROLE_ARN:
+        required: true
+      AWS_PARAM_STORE_TF_BACKEND_KEY:
+        required: true
+
+env:
+  TRE_ENV: ${{ inputs.tre_environment }}
+  LOG_GROUP_NAME: "tre-${{ inputs.github_environment }}-github-actions-logs"
+  LOG_STREAM_NAME: "${{ github.triggering_actor }}-${{ github.run_id }}-${{ github.run_attempt }}"
+  AWS_PARAM_STORE_TF_BACKEND_KEY: ${{ secrets.AWS_PARAM_STORE_TF_BACKEND_KEY }}
+  AWS_PARAM_STORE_TF_VARS_KEY: tre-${{ inputs.tre_environment }}-tfvars
+  TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+  TF_DIR: ${{ inputs.tf_dir }}
+  TERRAFORM_PLAN_BUCKET: s3://tre-terraform-plan
+  CLOUDWATCH_LOGS_BASE_URL: "https://console.aws.amazon.com/cloudwatch/home?region=eu-west-2#logsV2:log-groups/log-group/"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.github_environment }}
+    steps:
+      - name: Set friendly logs_url
+        run: echo "CLOUDWATCH_LOGS_URL=${CLOUDWATCH_LOGS_BASE_URL}${LOG_GROUP_NAME}/log-events/${LOG_STREAM_NAME}" >> $GITHUB_ENV
+      - name: Configure AWS credentials for test AWS role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ROLE_ARN }}
+          aws-region: eu-west-2
+          role-session-name: github-username-${{ github.triggering_actor }}
+      - name: Checkout da-tre-github-actions
+        uses: actions/checkout@v3
+        with:
+          repository: nationalarchives/da-tre-github-actions
+          ref: ${{ inputs.github_action_ref }}
+      - name: Copy /scripts
+        run: |
+          pwd
+          ls -la ../
+          cp -r scripts ../
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Move /scripts to Working Directory
+        run: |
+          pwd
+          ls -la ../
+          mv ../scripts .
+      - name: Setting terraform version
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.3.5
+          terraform_wrapper: false
+      - name: Install python dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+      - name: Terraform Plan
+        run: |
+          cat ./scripts/init.sh
+          ./scripts/plan.sh
+      - name: Notify Sucess
+        if: success()
+        run: |
+          ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/plan.txt"
+          echo "Plan available for <$CLOUDWATCH_LOGS_URL|terraform plan> in \`$TRE_ENV\`, requested by \`$TRIGGERING_ACTOR\`"
+      - name: Notify Failure
+        if: ${{ failure() }}
+        run: |
+          if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
+            ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/error.txt";
+            echo "Error.txt send to $CLOUDWATCH_LOGS_URL";
+          fi
