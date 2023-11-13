@@ -1,10 +1,9 @@
-# Gets next git version and tags repo- for use on merge to main
+# Gets next git version and tags repo. For use on merge to main
 name: get-and-tag-next-version
 on:
   push:
     branches:
       - main
-      - feature-DTE-864-autotag
 permissions:
   contents: write  # to push new git tag
 jobs:
