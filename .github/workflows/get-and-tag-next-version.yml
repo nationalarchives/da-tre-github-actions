@@ -1,40 +1,16 @@
-# Gets next git version tag, builds and deploys Docker image to ECR; if
-# successful, tags git with new version.
-name: docker-build-and-ecr-deploy
+# Gets next git version and tags repo. For use on merge to main
+name: get-and-tag-next-version
 on:
-  workflow_call:
-    # Define inputs to be passed from calling workflow
-    inputs:
-      # Name of created Docker image (version will be next git tag version)
-      docker_image_name:
-        type: string
-        required: true
-      # Dockerfile's directory
-      build_dir:
-        type: string
-        required: true
-      # ECR registry path (i.e. "foo" in "foo/docker-image-name")
-      ecr_registry_path:
-        type: string
-        required: true
-    # Define secrets to be passed from calling workflow
-    secrets:
-      AWS_OPEN_ID_CONNECT_ROLE_ARN:
-        required: true
-      AWS_REGION:
-        required: true
+  push:
+    branches:
+      - main
+      - feature-DTE-864-autotag
 permissions:
-  id-token: write  # required by aws-actions/configure-aws-credentials
   contents: write  # to push new git tag
 jobs:
-  build-deploy-and-tag-ecr-image:
+  get-next-version-and-push-tag:
     runs-on: ubuntu-latest
     steps:
-      - name: Diagnostic info
-        run: |
-          printf 'github.event.repository.name=%s\n' "${{ github.event.repository.name }}"
-          printf 'github.api_url=%s\n' "${{ github.api_url }}"
-          printf 'inputs.python_version=%s\n' "${{ inputs.python_version }}"
       - name: Checkout current
         uses: actions/checkout@v3
       - name: Get the version to use to tag this build
@@ -45,21 +21,6 @@ jobs:
       - name: Diagnostic info
         run: |
           printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
-      - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
-      - name: Build and push Docker image to AWS ECR
-        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.9
-        with:
-          dockerfile-dir: ${{ inputs.build_dir }}
-          image-name: ${{ inputs.docker_image_name }}
-          image-version: ${{ steps.build-tag.outputs.next-version }}
-          ecr-registry-path: ${{ inputs.ecr_registry_path }}
-          aws-region: ${{ secrets.AWS_REGION }}
       - name: Add Git tag for this build
         run: |
           git tag ${{ steps.build-tag.outputs.next-version }}
