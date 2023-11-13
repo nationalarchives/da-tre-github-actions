@@ -1,0 +1,26 @@
+# Gets next git version and tags repo. For use on merge to main
+name: get-and-tag-next-version
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write  # to push new git tag
+jobs:
+  get-next-version-and-push-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current
+        uses: actions/checkout@v3
+      - name: Get the version to use to tag this build
+        id: build-tag
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.1
+        with:
+          repo-name: ${{ github.event.repository.name }}
+      - name: Diagnostic info
+        run: |
+          printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
+      - name: Add Git tag for this build
+        run: |
+          git tag ${{ steps.build-tag.outputs.next-version }}
+          git push origin ${{ steps.build-tag.outputs.next-version }}
