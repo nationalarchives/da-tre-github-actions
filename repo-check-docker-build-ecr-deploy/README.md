@@ -2,10 +2,10 @@
 
 This action runs a set of actions to
 - Check the latest tag of a GitHub repository
-- Create an ECR for the artifact if it does not exist
-- Check if the version in ECR (Tag in ECR and GitHub tag same
-- Check if the GitHub tag version should be released
-- Build docker container and release to ECR-
+- Create an ECR for the container if it does not exist
+- Check if the latest GutHub tagged version has been releasede
+- Check if the GitHub tagged version should be released
+- Build docker container and release to ECR
 
 
 ## Usage
@@ -26,4 +26,4 @@ This action required four inputs.
 
 This action produces one output.
 
-1. **version** : The version of the artifact that has been deployed
+1. **version** : The version of the container that has been deployed
