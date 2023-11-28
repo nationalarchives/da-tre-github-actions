@@ -13,6 +13,19 @@ Common TRE github actions.
 | [update-allowed](update-allowed)                                                 | Checks if a specified tag can be used for an automated release       |
 | [get-next-version](.github/actions/get-next-version)                             | Get next version                                                     |
 | [get-aws-codeartifact-pip-url](.github/actions/get-aws-codeartifact-pip-url)     | Log in to AWS CodeArtifact; saves pip/pypi access URL to named file. |
+
+## Workflows
+| Workflow                                                                                                | Summary            |
+|---------------------------------------------------------------------------------------------------------|--------------------|
+| [Reusable Terraform plan, apply, destroy](.github/workflows/_reusable_terraform_plan_apply_destroy.yml) | Reusable terraform |
+| [docker-build-and-ecr-deploy](.github/workflows/docker-build-and-ecr-deploy.yml)                        ||
+| [docker-build-and-ecr-deploy](.github/workflows/docker-build-and-ecr-deploy-using-code-artifact.yml)    ||
+| [get-and-tag-next-version](.github/workflows/get-and-tag-next-version.yml)                              ||
+| [Court Document Parser CI/CD](.github/workflows/repo-check-docker-build-ecr-deploy.yml)                 ||
+| [on-push-checks](.github/workflows/repo-check-docker-build-ecr-deploy.yml)                              ||
+| [terraform-environments-action](.github/workflows/tf-plan-approve-apply.yml)                            ||
+| [terraform-environments-action](.github/workflows/tf-plan.yml)                                          ||
+
 ## Release History
 
 | Action                                            | Tag   | Summary                                              |
