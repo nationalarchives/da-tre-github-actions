@@ -5,7 +5,10 @@ Common TRE github actions.
 ## Actions
 | Action | Summary  |
 | -----  |----------|
- |[create-ecr-repositoy](create-ecr-repository) | Create an Amazon Elastic container registry ||
+|[create-ecr-repositoy](create-ecr-repository) | Create an Amazon Elastic container registry |
+|[update-json-value](update-json-value)        | Update JSON value in repository file with signed commit |
+|[repo-check-docker-build-ecr-deploy](repo-check-docker-build-ecr-deploy) | Create and push container for latest GitHub code |
+|[version-deployed](version-deployed)          | Check if specifed version (tag) of container has been deployed | 
 ## Release History
 
 | Action                                            | Tag   | Summary                                              |
