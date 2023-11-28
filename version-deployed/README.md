@@ -1,4 +1,4 @@
-## Check if a tag version is eligible for release
+## Check if a version tag is eligible for release
 
 This action checks if a version bump should be all. The logic is in the ```check_version.sh'''
 
@@ -7,8 +7,8 @@ This action checks if a version bump should be all. The logic is in the ```check
 
 This action required two inputs.
 
-1. **current-tag** : The tag of the version to compare with
-1. **new-tag** : The new tag version to check
+- **current-tag** : The tag of the version to compare with
+- **new-tag** : The new tag version to check
 
 ### Outputs
 

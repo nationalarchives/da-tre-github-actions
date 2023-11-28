@@ -5,11 +5,11 @@ This action checks if a version bump should be all. The logic is in the ```check
 ## Usage
 ### Inputs
 
-This action required two inputs.
+This action requires inputs.
 
-1. **ecr_registry_path** : ECR path such as ```tre-v2/tna-judgments-parser```
-1. **new-tag** : The new tag version to check
-1. **aws-role** : AWS role with permissions to read ECR
+ - **ecr_registry_path** : ECR path such as ```tre-v2/tna-judgments-parser```
+ - **new-tag** : The new tag version to check
+- **aws-role** : AWS role with permissions to read ECR
 
 ### Outputs
 

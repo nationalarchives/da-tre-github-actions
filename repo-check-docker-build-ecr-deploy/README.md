@@ -12,18 +12,18 @@ This action runs a set of actions to
 
 ### Inputs
 
-This action required four inputs.
+This action requires inputs.
 
-1. **repository_name** : The name of the GitHub repository
+- **repository_name** : The name of the GitHub repository
    - default: ```nationalarchives/tna-judgments-parser```
-1. **ecr_registry_path** : The ECR name
+- **ecr_registry_path** : The ECR name
    - default: ```tre-v2/tna-judgments-parser```
-1. **docker_file** : The docker file used for the build in the GitHub repository
+- **docker_file** : The docker file used for the build in the GitHub repository
    - default: ```TRE/DockerfileV2```
-1. **aws_role** : AWS role with permission to perform actions on account ECR
+- **aws_role** : AWS role with permission to perform actions on account ECR
 
 ### Outputs
 
 This action produces one output.
 
-1. **version** : The version of the container that has been deployed
+- **version** : The version of the container that has been deployed
