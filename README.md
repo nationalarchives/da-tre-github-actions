@@ -2,6 +2,10 @@
 
 Common TRE github actions.
 
+## Actions
+| Action | Summary  |
+| -----  |----------|
+ |[create-ecr-repositoy](../create-ecr-repository) | Create an Amazon Elastic container registry ||
 ## Release History
 
 | Action                                            | Tag   | Summary                                              |
