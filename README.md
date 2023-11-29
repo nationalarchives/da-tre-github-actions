@@ -22,9 +22,9 @@ Common TRE github actions.
 | [docker-build-and-ecr-deploy](.github/workflows/docker-build-and-ecr-deploy-using-code-artifact.yml)    |Gets next git version tag, builds and deploys Docker image to ECR; if successful, tags git with new version (Using Code Artifact)|
 | [get-and-tag-next-version](.github/workflows/get-and-tag-next-version.yml)                              |Gets next git version and tags repo. For use on merge to main|
 | [Court Document Parser CI/CD](.github/workflows/repo-check-docker-build-ecr-deploy.yml)                 |Get latest tag from GitHub reoo. Build docker container and deploy to ECR if required  |
-| [on-push-checks](.github/workflows/repo-check-docker-build-ecr-deploy.yml)                              ||
-| [terraform-environments-action](.github/workflows/tf-plan-approve-apply.yml)                            ||
-| [terraform-environments-action](.github/workflows/tf-plan.yml)                                          ||
+| [on-push-checks](.github/workflows/repo-check-docker-build-ecr-deploy.yml)                              |To do|
+| [terraform-environments-action](.github/workflows/tf-plan-approve-apply.yml)                            |To do|
+| [terraform-environments-action](.github/workflows/tf-plan.yml)                                          |To do|
 
 ## Release History
 
