@@ -20,7 +20,7 @@ This action requires inputs.
    - default: ```tre-v2/tna-judgments-parser```
 - **docker_file** : The docker file used for the build in the GitHub repository
    - default: ```TRE/DockerfileV2```
-- **aws_role** : AWS role with permission to perform actions on account ECR
+- **aws_role** : AWS role with permission to perform actions on account's ECR
 
 ### Outputs
 
