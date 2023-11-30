@@ -1,6 +1,6 @@
 ## Check if a version tag is eligible for release
 
-This action checks if a version bump should be all. The logic is in the ```check_version.sh'''
+This action checks if a version bump should be allowed. The logic is in the ```check_version.sh'''
 
 ## Usage
 ### Inputs

@@ -3,7 +3,7 @@
 This action runs a set of actions to
 - Check the latest tag of a GitHub repository
 - Create an ECR for the container if it does not exist
-- Check if the latest GutHub tagged version has been releasede
+- Check if the latest GutHub tagged version has been released
 - Check if the GitHub tagged version should be released
 - Build docker container and release to ECR
 

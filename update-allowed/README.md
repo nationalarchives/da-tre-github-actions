@@ -1,6 +1,6 @@
 ## Check if the tagged container version already exists in Amazon ECR
 
-This action checks if a version bump should be all. The logic is in the ```check_version.sh``` file
+This action checks if a version bump should be allowed. The logic is in the ```check_version.sh``` file
 
 ## Usage
 ### Inputs
