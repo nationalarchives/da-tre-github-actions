@@ -38,7 +38,6 @@ def send_to_slack(message: str, webhook_url: str):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Send message to slack webhook")
     parser.add_argument(
         "-m", "--message", help="message to send", type=str, required=True

@@ -1,0 +1,53 @@
+name: 'Run system tests'
+description: 'Run system tests for environment'
+inputs:
+  source_role:
+    description: The management role for the action to assume
+  target_role:
+    description: The testing role for the management role to assume
+  testing_ssh_key:
+    description: SSH key for checking out systems testing repo
+    required: true
+  environment_name:
+    description: The prefix for the environment infrastructure to test on
+    required: true
+  system_test_tags:
+    description: The tags of tests to run if provided
+    required: false
+    default: ""
+runs:
+  using: "composite"
+  steps:
+  - name: 'Configure AWS credentials for source role'
+    uses: aws-actions/configure-aws-credentials@v3
+    with:
+      role-to-assume: ${{ inputs.source_role }}
+      aws-region: eu-west-2
+  - name: 'Get caller identity'
+    run:  aws sts get-caller-identity
+    shell: bash
+  - name: 'Configure AWS credentials for target role'
+    uses: aws-actions/configure-aws-credentials@v3
+    with:
+      role-to-assume: ${{ inputs.target_role }}
+      aws-region: eu-west-2
+      role-chaining: true
+      role-skip-session-tagging: true
+  - name: 'Get caller identity'
+    run:  aws sts get-caller-identity
+    shell: bash
+  - name: 'Checkout system testing repo'
+    uses: actions/checkout@v3
+    with:
+      ssh-key: ${{ inputs.testing_ssh_key }}
+      repository: nationalarchives/da-tre-system-testing
+      ref: main
+  - name: 'List directories'
+    run: ls -lR
+    shell: bash
+  - name: 'Run system tests'
+    uses: coursier/setup-action@v1
+  - run: sbt test -Dcucumber.filter.tags="${{ inputs.system_test_tags }}"
+    shell: bash
+    env:
+      ENV: ${{ inputs.environment_name }}
