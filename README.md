@@ -26,6 +26,13 @@ Common TRE github actions.
 | [terraform-environments-action](.github/workflows/tf-plan-approve-apply.yml)                            |To do|
 | [terraform-environments-action](.github/workflows/tf-plan.yml)                                          |To do|
 
+### Scala Steward
+This workflow runs once per day at 08:15. It runs Scala Steward against all the repositories in [repos.md](./repos.md).
+
+The pull requests are created using the tna-digital-archiving-jenkins user
+
+There is a config file in .github/scala-steward.conf. This is ignoring updates from AWS for now because they release a new patch version every day and this is causing a lot of updates. Once AWS release a new minor version, Scala Steward will create a pull request for that.
+
 ## Release History
 
 | Action                                            | Tag   | Summary                                              |
