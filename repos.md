@@ -6,3 +6,4 @@
 - nationalarchives/da-tre-fn-template
 - nationalarchives/da-tre-fn-failure-destination
 - nationalarchives/da-tre-fn-success-destination
+- nationalarchives/da-transform-schemas
