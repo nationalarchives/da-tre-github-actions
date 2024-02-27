@@ -88,7 +88,7 @@ jobs:
       - name: login
         uses: aws-actions/configure-aws-credentials@v3
         with:
-           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+           role-to-assume: ${{ secrets.AWS_PLATFORM }}
            aws-region: eu-west-2
            role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: build and push
