@@ -35,50 +35,50 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks latest tag in repository
-      - name: Get latest repository tag
-        uses: oprypin/find-latest-tag@v1
-        id: latest_tag
-        with:
-          repository: ${{ inputs.repository_name }}
-      # The repo must exist before it can be checked
-      - name: create ecr repo if required
-        id: create-ecr-repo
-        uses: nationalarchives/da-tre-github-actions/create-ecr-repository@0.0.10
-        with:
-          ecr_registry_path: "${{inputs.ecr_registry_path}}"
-          aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
-      # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
-      - name: version deployed
-        id: deployed
-        uses: nationalarchives/da-tre-github-actions/version-deployed@0.0.11
-        with:
-          ecr_registry_path: "${{inputs.ecr_registry_path}}"
-          new-tag: "${{steps.latest_tag.outputs.tag}}"
-          aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
-      # Exit if already deployed
-      - name: stop if deployed
-        run: |
-            echo "registry ${{inputs.ecr_registry_path}} created ${{steps.create-ecr-repo.outputs.created}}"
-            echo "version ${{steps.latest_tag.outputs.tag}} deployed  ${{steps.deployed.outputs.version-deployed}}"
-            if [ ${{steps.deployed.outputs.version-deployed}} -eq 1 ];  then exit 1; fi
-      # Get the latest pushed version
-      - name: latest version
-        id: latest-ecr-version-tag
-        uses: nationalarchives/da-tre-github-actions/latest-ecr-version@0.0.12
-        with:
-          ecr_registry_path: "${{inputs.ecr_registry_path}}"
-          aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
-      - name: ok to update
-        id: update_okay
-        uses: nationalarchives/da-tre-github-actions/update-allowed@0.0.10
-        with:
-         current-tag: "${{steps.latest-ecr-version-tag.outputs.latest-version}}"
-         new-tag: "${{steps.latest_tag.outputs.tag}}"
+      # - name: Get latest repository tag
+      #   uses: oprypin/find-latest-tag@v1
+      #   id: latest_tag
+      #   with:
+      #     repository: ${{ inputs.repository_name }}
+      # # The repo must exist before it can be checked
+      # - name: create ecr repo if required
+      #   id: create-ecr-repo
+      #   uses: nationalarchives/da-tre-github-actions/create-ecr-repository@0.0.10
+      #   with:
+      #     ecr_registry_path: "${{inputs.ecr_registry_path}}"
+      #     aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
+      # # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
+      # - name: version deployed
+      #   id: deployed
+      #   uses: nationalarchives/da-tre-github-actions/version-deployed@0.0.11
+      #   with:
+      #     ecr_registry_path: "${{inputs.ecr_registry_path}}"
+      #     new-tag: "${{steps.latest_tag.outputs.tag}}"
+      #     aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
+      # # Exit if already deployed
+      # - name: stop if deployed
+      #   run: |
+      #       echo "registry ${{inputs.ecr_registry_path}} created ${{steps.create-ecr-repo.outputs.created}}"
+      #       echo "version ${{steps.latest_tag.outputs.tag}} deployed  ${{steps.deployed.outputs.version-deployed}}"
+      #       if [ ${{steps.deployed.outputs.version-deployed}} -eq 1 ];  then exit 1; fi
+      # # Get the latest pushed version
+      # - name: latest version
+      #   id: latest-ecr-version-tag
+      #   uses: nationalarchives/da-tre-github-actions/latest-ecr-version@0.0.12
+      #   with:
+      #     ecr_registry_path: "${{inputs.ecr_registry_path}}"
+      #     aws-role: "${{secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}"
+      # - name: ok to update
+      #   id: update_okay
+      #   uses: nationalarchives/da-tre-github-actions/update-allowed@0.0.10
+      #   with:
+      #    current-tag: "${{steps.latest-ecr-version-tag.outputs.latest-version}}"
+      #    new-tag: "${{steps.latest_tag.outputs.tag}}"
       - name: Checkout
         uses: actions/checkout@v2
         with:
           repository: ${{ inputs.repository_name }}
-          ref: 'main'
+          ref: 'dotnet8'
       # This workflow takes a registry path tre_v2/image_name  the must be split for docker build action
       - name: Split registry
         id: registry
@@ -88,7 +88,7 @@ jobs:
       - name: login
         uses: aws-actions/configure-aws-credentials@v3
         with:
-           role-to-assume: ${{ inputs.aws-role }}
+           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
            aws-region: eu-west-2
            role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: build and push
@@ -99,4 +99,4 @@ jobs:
            dockerfile-dir: "."
            image-name: "${{steps.registry.outputs.image-name}}"
            aws-region: "eu-west-2"
-           image-version: "${{steps.latest_tag.outputs.tag}}"
+           image-version: "dotnet8"
