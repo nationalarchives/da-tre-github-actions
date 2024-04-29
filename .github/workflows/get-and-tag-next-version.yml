@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - add-script-to-get-latest-versions
   workflow_call:
 permissions:
   contents: write  # to push new git tag
