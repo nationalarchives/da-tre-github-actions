@@ -9,7 +9,7 @@ inputs:
 outputs:
   all-latest-versions:
     description: The latest versions for the tre repositories
-    value: ${{ steps.get-versions.outputs.all-versions }}
+    value: ${{ steps.get-versions.outputs.all_latest_versions }}
 runs:
   using: "composite"
   steps:
@@ -32,6 +32,7 @@ runs:
         from get_latest_versions import get_latest_versions
 
         all_latest_versions = get_latest_versions()
+        print(all_latest_versions)
 
         # Save step output values in GitHub's step output file
         with open(os.getenv('GITHUB_OUTPUT'), 'a') as f:
