@@ -9,7 +9,7 @@ inputs:
 outputs:
   all-latest-versions:
     description: The latest versions for the tre repositories
-    value: ${{ steps.get-versions.outputs.all_latest_versions }}
+    value: ${{ steps.get-versions.outputs.all-latest-versions }}
 runs:
   using: "composite"
   steps:
