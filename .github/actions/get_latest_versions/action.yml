@@ -32,3 +32,5 @@ runs:
         # Save step output values in GitHub's step output file
         with open(os.getenv('GITHUB_OUTPUT'), 'a') as f:
             f.write(f'all-latest-versions={all_latest_versions}')
+      env:
+        GITHUB_API_TOKEN: ${{ secrets.WORKFLOW_PAT }}
