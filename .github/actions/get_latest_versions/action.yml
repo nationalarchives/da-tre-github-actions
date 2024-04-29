@@ -27,8 +27,8 @@ runs:
         import os
         from get_latest_versions import get_latest_versions
 
-        all-latest-versions = get_latest_versions()
+        all_latest_versions = get_latest_versions()
 
         # Save step output values in GitHub's step output file
         with open(os.getenv('GITHUB_OUTPUT'), 'a') as f:
-            f.write(f'all-latest-versions={all-latest-versions}')
+            f.write(f'all-latest-versions={all_latest_versions}')
