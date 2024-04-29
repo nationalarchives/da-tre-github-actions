@@ -2,6 +2,10 @@
 
 name: 'Get latest version for all'
 description: 'Get the latest version for all the tre repositories'
+inputs:
+  github_token:
+    type: string
+    required: true
 outputs:
   all-latest-versions:
     description: The latest versions for the tre repositories
@@ -33,4 +37,4 @@ runs:
         with open(os.getenv('GITHUB_OUTPUT'), 'a') as f:
             f.write(f'all-latest-versions={all_latest_versions}')
       env:
-        GITHUB_API_TOKEN: ${{ secrets.WORKFLOW_PAT }}
+        GITHUB_API_TOKEN: ${{ inputs.github_token }}
