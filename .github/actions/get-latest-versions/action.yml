@@ -1,0 +1,41 @@
+# Action to get the latest versions for all the tre repositories which are required for da-tre-terraform-environments.
+
+name: 'Get the latest versions'
+description: 'Get the latest version for all the tre repositories'
+inputs:
+  github_token:
+    type: string
+    required: true
+outputs:
+  all-latest-versions:
+    description: The latest versions for the tre repositories
+    value: ${{ steps.get-versions.outputs.all-latest-versions }}
+runs:
+  using: "composite"
+  steps:
+    - name: Setup
+      shell: bash
+      run: |
+        printf 'github.action_path=%s\n' "${{ github.action_path }}"
+        # The following cd command does not persist across steps
+        cd '${{ github.action_path }}'
+        pip install --requirement requirements.txt
+    - name: 'Set PYTHONPATH to "${{ github.action_path }}"'
+      shell: bash
+      run: |
+        echo "PYTHONPATH=${{ github.action_path }}" >> $GITHUB_ENV
+    - name: 'Get versions for all the tre repositories"'
+      id: get-versions
+      shell: python
+      run: |
+        import os
+        from get_latest_versions import get_latest_versions
+
+        all_latest_versions = get_latest_versions()
+        print(all_latest_versions)
+
+        # Save step output values in GitHub's step output file
+        with open(os.getenv('GITHUB_OUTPUT'), 'a') as f:
+            f.write(f'all-latest-versions={all_latest_versions}')
+      env:
+        GITHUB_API_TOKEN: ${{ inputs.github_token }}
