@@ -1,6 +1,6 @@
-# Action to get the latest versions for all the tre repositories.
+# Action to get the latest versions for all the tre repositories which are required for da-tre-terraform-environments.
 
-name: 'Get latest version for all'
+name: 'Get the latest versions'
 description: 'Get the latest version for all the tre repositories'
 inputs:
   github_token:
