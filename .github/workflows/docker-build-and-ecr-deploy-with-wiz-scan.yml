@@ -2,10 +2,8 @@
 # successful, tags git with new version.
 name: docker-build-and-ecr-deploy-with-wiz-scan
 on:
-  workflow_call:
-    # Define inputs to be passed from calling workflow
-    inputs:
-      # Name of created Docker image (version will be next git tag version)
+  workflow_call: # Define inputs to be passed from calling workflow
+    inputs: # Name of created Docker image (version will be next git tag version)
       docker_image_name:
         type: string
         required: true
