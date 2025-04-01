@@ -7,8 +7,8 @@ inputs:
     description: 'The directory containing the Docker file to build; e.g. "build-dir"'
     required: true
   docker-file:
-      description: 'Optional path to Dockerfile'
-      required: false
+    description: 'Optional path to Dockerfile'
+    required: false
   image-name:
     description: 'The name of the Docker image to push; e.g. "some-image"'
     required: true
@@ -24,12 +24,28 @@ inputs:
   pip-index-file:
     description: 'Optional file containing pip index url to be supplied as a docker build argument'
     required: false
+  wiz-client-id:
+    description: 'Wiz client ID'
+    required: true
+  wiz-client-secret:
+    description: 'Wiz client secret'
+    required: true
+
 runs:
   using: "composite"
   steps:
     - name: AWS ECR login
       id: aws-ecr-login
       uses: aws-actions/amazon-ecr-login@v1
+    - name: Download Wiz CLI
+      shell: bash
+      run: |
+        curl -o wizcli https://wizcli.app.wiz.io/wizcli
+        chmod +x wizcli
+    - name: Authenticate to Wiz API
+      shell: bash
+      run: |
+        ./wizcli auth --id ${{ inputs.wiz-client-id }} --secret ${{ inputs.wiz-client-secret }}
     - name: Docker build and tag
       shell: bash
       env:
@@ -54,6 +70,9 @@ runs:
         --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
         "${{ inputs.dockerfile-dir }}"
         docker images
+    - name: Run wiz CLI IaC scan
+      shell: bash
+      run: ./wizcli iac scan --path . --name ${{ inputs.image-name }}-${{github.run_number}}
     - name: 'AWS ECR docker push'
       shell: bash
       env:
@@ -79,3 +98,6 @@ runs:
         fi
 
         docker push "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_TAG}"
+        ./wizcli docker tag --image "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_TAG}"
+   
+         
