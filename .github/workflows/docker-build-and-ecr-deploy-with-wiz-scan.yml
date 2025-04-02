@@ -70,7 +70,7 @@ jobs:
       - name: Authenticate to Wiz API and scan
         run: |
           ./wizcli auth --id ${{ secrets.WIZ_CLIENT_ID }} --secret ${{ secrets.WIZ_CLIENT_SECRET }}   
-          ./wizcli docker scan --image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }} --project ${{ secrets.WIZ_PROJECT_TRE}} --ignore-comments
+          ./wizcli docker scan --image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }} --project ${{ secrets.WIZ_PROJECT_TRE}}
       - name: 'AWS ECR docker push'
         shell: bash
         run: |
