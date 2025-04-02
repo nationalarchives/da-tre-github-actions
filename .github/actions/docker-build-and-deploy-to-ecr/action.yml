@@ -7,8 +7,8 @@ inputs:
     description: 'The directory containing the Docker file to build; e.g. "build-dir"'
     required: true
   docker-file:
-      description: 'Optional path to Dockerfile'
-      required: false
+    description: 'Optional path to Dockerfile'
+    required: false
   image-name:
     description: 'The name of the Docker image to push; e.g. "some-image"'
     required: true
@@ -24,6 +24,15 @@ inputs:
   pip-index-file:
     description: 'Optional file containing pip index url to be supplied as a docker build argument'
     required: false
+  wiz-client-id:
+    description: 'Wiz client ID'
+    required: true
+  wiz-client-secret:
+    description: 'Wiz client secret'
+    required: true
+  wiz-project-tre:
+    description: 'Wiz project TRE'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -54,6 +63,17 @@ runs:
         --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
         "${{ inputs.dockerfile-dir }}"
         docker images
+    - name: Download Wiz CLI
+      shell: bash
+      run: |
+        curl -o wizcli https://wizcli.app.wiz.io/wizcli
+        chmod +x wizcli
+    - name: Authenticate to Wiz API and scan
+      shell: bash
+      run: |
+        ./wizcli auth --id ${{ inputs.wiz-client-id }} --secret ${{ inputs.wiz-client-secret }}
+        ./wizcli iac scan --path . --name ${{ inputs.image-name }}-${{github.run_number}} --project ${{ inputs.wiz-project-tre}}  
+        ./wizcli docker scan --image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}:${{ inputs.image-version }} --project ${{ secrets.WIZ_PROJECT_TRE}}
     - name: 'AWS ECR docker push'
       shell: bash
       env:
@@ -79,3 +99,7 @@ runs:
         fi
 
         docker push "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_TAG}"
+    - name: Wiz Docker Tag
+      shell: bash
+      run: |
+        ./wizcli docker tag --image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}:${{ inputs.image-version }}
