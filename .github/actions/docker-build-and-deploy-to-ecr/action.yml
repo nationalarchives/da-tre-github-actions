@@ -73,7 +73,7 @@ runs:
       run: |
         ./wizcli auth --id ${{ inputs.wiz-client-id }} --secret ${{ inputs.wiz-client-secret }}
         ./wizcli iac scan --path . --name ${{ inputs.image-name }}-${{github.run_number}} --project ${{ inputs.wiz-project-tre}}  
-        ./wizcli docker scan --image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}:${{ inputs.image-version }} --project ${{ secrets.WIZ_PROJECT_TRE}}
+        ./wizcli docker scan --image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}:${{ inputs.image-version }} --project ${{ inputs.wiz-project-tre}}
     - name: 'AWS ECR docker push'
       shell: bash
       env:
