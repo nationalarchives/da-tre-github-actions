@@ -36,7 +36,7 @@ jobs:
           printf 'github.api_url=%s\n' "${{ github.api_url }}"
           printf 'inputs.python_version=%s\n' "${{ inputs.python_version }}"
       - name: Checkout current
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Get the version to use to tag this build
         id: build-tag
         uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.1
@@ -46,7 +46,7 @@ jobs:
         run: |
           printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
       - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
