@@ -52,6 +52,10 @@
             git_user_signingkey: true
             git_commit_gpgsign: true
       - uses: actions/setup-python@v3
+      - name: Terraform setup
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.3
       - name: pre-commit
         continue-on-error: true
         uses: pre-commit/action@v3.0.0
