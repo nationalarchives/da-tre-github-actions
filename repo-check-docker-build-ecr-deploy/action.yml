@@ -27,6 +27,15 @@ inputs:
   aws_role:
     type: string
     required: true
+  wiz-client-id:
+    type: string
+    required: true
+  wiz-client-secret:
+    type: string
+    required: true
+  wiz-project-tre:
+    type: string
+    required: true
 
 outputs:
   version:
@@ -35,8 +44,7 @@ outputs:
 runs:
   using: composite
   # Steps represent a sequence of tasks that will be executed as part of the job
-  steps:
-    # Checks latest tag in repository
+  steps: # Checks latest tag in repository
     - name: Get latest repository tag
       uses: oprypin/find-latest-tag@v1
       id: latest_tag
@@ -96,11 +104,14 @@ runs:
         aws-region: eu-west-2
         role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
     - name: build and push
-      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.10
+      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.45
       with:
         ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}"
-        docker-file:  "${{inputs.docker_file}}"
+        docker-file: "${{inputs.docker_file}}"
         dockerfile-dir: "."
         image-name: "${{steps.registry.outputs.image-name}}"
         aws-region: "eu-west-2"
         image-version: "${{steps.latest_tag.outputs.tag}}"
+        wiz-client-id: "${{inputs.wiz-client-id }}"
+        wiz-client-secret: "${{inputs.wiz-client-secret }}"
+        wiz-project-tre: "${{inputs.wiz-project-tre}}"
