@@ -96,7 +96,7 @@ runs:
         aws-region: eu-west-2
         role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
     - name: build and push
-      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.10
+      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.45
       with:
         ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}"
         docker-file:  "${{inputs.docker_file}}"
@@ -104,3 +104,6 @@ runs:
         image-name: "${{steps.registry.outputs.image-name}}"
         aws-region: "eu-west-2"
         image-version: "${{steps.latest_tag.outputs.tag}}"
+        wiz-client-id: "${{secrets.WIZ_CLIENT_ID }}"
+        wiz-client-secret: "${{secrets.WIZ_CLIENT_SECRET }}"
+        wiz-project-tre: "${{secrets.WIZ_PROJECT_TRE }}"
