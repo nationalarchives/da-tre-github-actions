@@ -19,7 +19,7 @@ runs:
   using: "composite"
   steps:
   - name: 'Configure AWS credentials for source role'
-    uses: aws-actions/configure-aws-credentials@v3
+    uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
     with:
       role-to-assume: ${{ inputs.source_role }}
       aws-region: eu-west-2
@@ -27,7 +27,7 @@ runs:
     run:  aws sts get-caller-identity
     shell: bash
   - name: 'Configure AWS credentials for target role'
-    uses: aws-actions/configure-aws-credentials@v3
+    uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
     with:
       role-to-assume: ${{ inputs.target_role }}
       aws-region: eu-west-2
@@ -37,7 +37,7 @@ runs:
     run:  aws sts get-caller-identity
     shell: bash
   - name: 'Checkout system testing repo'
-    uses: actions/checkout@v3
+    uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     with:
       ssh-key: ${{ inputs.testing_ssh_key }}
       repository: nationalarchives/da-tre-system-testing
@@ -46,7 +46,7 @@ runs:
     run: ls -lR
     shell: bash
   - name: 'Run system tests'
-    uses: coursier/setup-action@v1
+    uses: coursier/setup-action@039f736548afa5411c1382f40a5bd9c2d30e0383
   - run: sbt test -Dcucumber.filter.tags="${{ inputs.system_test_tags }}"
     shell: bash
     env:

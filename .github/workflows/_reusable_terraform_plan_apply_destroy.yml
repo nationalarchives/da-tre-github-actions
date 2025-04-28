@@ -74,13 +74,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Setup AWS
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
         with:
           role-to-assume: ${{ vars.ROLE_ARN }}
           aws-region: eu-west-2
       - run:  aws sts get-caller-identity
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
          ref: ${{ inputs.ref }}
       - name: Get vars from SSM
@@ -89,7 +89,7 @@ jobs:
           --with-decryption --query "Parameters[*].Value" \
           --output text > ssm.tfvars.json
           cat "ssm.tfvars.json"
-      - uses: hashicorp/setup-terraform@v2
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
           terraform_version: ${{ vars.TERRAFORM_VERSION }}
           terraform_wrapper: true
@@ -107,13 +107,13 @@ jobs:
       # Always store the plan if terraform plan detects changes and user has requested an apply
       - name: Store apply plan
         if: ${{ inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2 }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: tfplan-${{ inputs.environment }}.out
           path: tfplan.out
       - name: wait-for-approval
         if: ${{ inputs.needs_approval && inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2}}
-        uses: trstringer/manual-approval@v1
+        uses: trstringer/manual-approval@662b3ddbc7685f897992051e87e1b4b58c07dc03
         timeout-minutes: 90
         with:
           secret: ${{ github.TOKEN }}
