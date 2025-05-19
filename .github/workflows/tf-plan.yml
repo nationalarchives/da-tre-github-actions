@@ -39,7 +39,7 @@ jobs:
       - name: Set friendly logs_url
         run: echo "CLOUDWATCH_LOGS_URL=${CLOUDWATCH_LOGS_BASE_URL}${LOG_GROUP_NAME}/log-events/${LOG_STREAM_NAME}" >> $GITHUB_ENV
       - name: Configure AWS credentials for test AWS role
-        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: eu-west-2
