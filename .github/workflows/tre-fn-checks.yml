@@ -46,7 +46,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
@@ -78,7 +78,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
