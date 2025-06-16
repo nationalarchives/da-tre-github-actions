@@ -113,7 +113,7 @@ jobs:
           path: tfplan.out
       - name: wait-for-approval
         if: ${{ inputs.needs_approval && inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2}}
-        uses: trstringer/manual-approval@a1f96b91e22565d2730d88ae055c8dc333e471c1
+        uses: trstringer/manual-approval@9f5e5d6bc511762e17f849775a3c56bdea6b4493
         timeout-minutes: 90
         with:
           secret: ${{ github.TOKEN }}
