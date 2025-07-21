@@ -100,7 +100,6 @@ jobs:
     steps:
       - name: Manual Approve Info
         run: |
-          terraform -v
           echo ${{ github.triggering_actor }}
           echo ${{ github.actor }}
   apply:
