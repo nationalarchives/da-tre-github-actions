@@ -58,32 +58,16 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           submodules: recursive
-      - name: Move /scripts to Working Directory
-        run: |
-          pwd
-          ls -la ../
-          mv ../scripts .
       - name: Setting terraform version
         uses: hashicorp/setup-terraform@v3.1.2
         with:
           terraform_version: 1.12.2
           terraform_wrapper: false
-      - name: Install python dependencies
-        run: |
-          pip install -r scripts/requirements.txt
       - name: Terraform Plan
         run: |
-          cat ./scripts/init.sh
-          ./scripts/plan.sh
-      - name: Notify Success
-        if: success()
-        run: |
-          ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/plan.txt"
-          echo "Plan.txt sent to $CLOUDWATCH_LOGS_URL";
-      - name: Notify Failure
-        if: ${{ failure() }}
-        run: |
-          if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
-            ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/error.txt";
-            echo "Error.txt sent to $CLOUDWATCH_LOGS_URL";
-          fi
+          terraform -v
+          aws ssm get-parameters --name "${AWS_PARAM_STORE_TF_BACKEND_KEY}" --with-decryption --query "Parameters[*].Value" --output text > backend.conf
+          aws ssm get-parameters --name "${AWS_PARAM_STORE_TF_VARS_KEY}" --with-decryption --query "Parameters[*].Value" --output text > terraform.tfvars.json
+          terraform init -backend-config=backend.conf -reconfigure  
+          terraform workspace select ${TRE_ENV} 
+          terraform plan -no-color -detailed-exitcode -input=false -var-file="terraform.tfvars.json"
