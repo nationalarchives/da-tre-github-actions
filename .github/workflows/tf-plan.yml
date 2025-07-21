@@ -70,3 +70,4 @@ jobs:
           terraform init -reconfigure
           terraform workspace select ${TRE_ENV} 
           terraform plan -no-color -input=false -var-file="terraform.tfvars.json"
+          cat .terraform.lock.hcl
