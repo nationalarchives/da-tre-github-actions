@@ -2,7 +2,7 @@
 cd "${TF_DIR}"
 ls -la ../
 sh ../scripts/init.sh
-terraform plan -no-color -detailed-exitcode -input=false -var-file="terraform.tfvars.json" -out plan.out > /dev/null 2> error.txt
+terraform plan -no-color -detailed-exitcode -input=false -var-file="terraform.tfvars.json" -out plan.out
 TF_EXIT_CODE=$?
 echo "TF exited with ${TF_EXIT_CODE}"
 
@@ -20,5 +20,5 @@ if [ $TF_EXIT_CODE -eq 1 ]; then
 fi
 
 set -e
-terraform show -no-color plan.out > plan.txt 2> error.txt
-aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${TRE_ENV}"/"${TRIGGERING_ACTOR}"/ > /dev/null 2> error.txt
+terraform show -no-color plan.out
+aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${TRE_ENV}"/"${TRIGGERING_ACTOR}"/
