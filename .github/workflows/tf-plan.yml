@@ -67,10 +67,6 @@ jobs:
         run: |
           cd ${TF_DIR}
           terraform -v
-          aws ssm get-parameters --name "${AWS_PARAM_STORE_TF_BACKEND_KEY}" --with-decryption --query "Parameters[*].Value" --output text > backend.conf
-          aws ssm get-parameters --name "${AWS_PARAM_STORE_TF_VARS_KEY}" --with-decryption --query "Parameters[*].Value" --output text > terraform.tfvars.json
-          echo "backend.conf"
-          cat backend.conf
           echo "terraform.tfvars.json"
           cat terraform.tfvars.json          
           terraform init -backend-config=backend.conf -reconfigure
