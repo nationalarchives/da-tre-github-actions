@@ -64,7 +64,7 @@ jobs:
           terraform_version: 1.12.2
           terraform_wrapper: false
       - name: Terraform Plan
-        working-directory: "${TRE_ENV}"
+        working-directory: ${TF_DIR}
         run: |
           terraform -v
           aws ssm get-parameters --name "${AWS_PARAM_STORE_TF_BACKEND_KEY}" --with-decryption --query "Parameters[*].Value" --output text > backend.conf
