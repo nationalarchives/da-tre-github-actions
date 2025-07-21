@@ -72,6 +72,10 @@ jobs:
           cat backend.conf
           echo "terraform.tfvars.json"
           cat terraform.tfvars.json
-          terraform init -backend-config=backend.conf -reconfigure  
+ 
+          
+          terraform init -backend-config=backend.conf -reconfigure
+          echo "list workspaces"
+          terraform workspace list
           terraform workspace select ${TRE_ENV} 
           terraform plan -no-color -detailed-exitcode -input=false -var-file="terraform.tfvars.json"
