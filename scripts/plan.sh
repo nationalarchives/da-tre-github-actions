@@ -20,5 +20,5 @@ if [ $TF_EXIT_CODE -eq 1 ]; then
 fi
 
 set -e
-terraform show -no-color plan.out
+terraform show -no-color plan.out > plan.txt
 aws s3 cp plan.out "${TERRAFORM_PLAN_BUCKET}"/"${TRE_ENV}"/"${TRIGGERING_ACTOR}"/
