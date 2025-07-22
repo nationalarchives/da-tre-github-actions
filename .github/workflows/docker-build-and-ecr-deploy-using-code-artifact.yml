@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Get the version to use to tag this build
         id: build-tag
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.55
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.57
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info
@@ -69,7 +69,7 @@ jobs:
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Save AWS CodeArtifact pip URL to file
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.55
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.57
         with:
           repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
           domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
@@ -77,7 +77,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           pip-url-output-file: ${{ inputs.pip_url_output_file }}
       - name: Build and push Docker image to AWS ECR
-        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.55
+        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.57
         with:
           dockerfile-dir: ${{ inputs.build_dir }}
           image-name: ${{ inputs.docker_image_name }}
