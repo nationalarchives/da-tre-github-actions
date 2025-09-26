@@ -133,7 +133,7 @@ jobs:
           echo "TESTING_ENVIRONMENT=$TESTING_ENVIRONMENT" >> $GITHUB_ENV
       - name: Run system tests
         if: ${{ inputs.run_system_tests && steps.terraform_plan.outputs.exitcode == 2 }}
-        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@0.0.60
+        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@0.0.64
         with:
           source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
           target_role: ${{ secrets.TESTING_TARGET_ROLE }}
