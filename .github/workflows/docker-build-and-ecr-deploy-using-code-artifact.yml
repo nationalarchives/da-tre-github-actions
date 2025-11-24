@@ -52,7 +52,7 @@ jobs:
           printf 'github.api_url=%s\n' "${{ github.api_url }}"
           printf 'inputs.python_version=%s\n' "${{ inputs.python_version }}"
       - name: Checkout current
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
       - name: Get the version to use to tag this build
         id: build-tag
         uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.65
