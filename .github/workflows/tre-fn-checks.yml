@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
       - name: Setup Python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
         with:
@@ -53,7 +53,7 @@ jobs:
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Get AWS CodeArtifact pip URL
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.65
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.67
         with:
           repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
           domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
       - name: Setup Python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
         with:
@@ -85,7 +85,7 @@ jobs:
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Get AWS CodeArtifact pip URL
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.65
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.67
         with:
           repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
           domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
@@ -105,7 +105,7 @@ jobs:
     if: inputs.run_pre_commit
     steps:
       - name: Checkout current
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
       - name: Setup Python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
         with:

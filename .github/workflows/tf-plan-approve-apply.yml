@@ -50,7 +50,7 @@ jobs:
           aws-region: eu-west-2
           role-session-name: github-username-${{ github.triggering_actor }}
       - name: Checkout da-tre-github-actions
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
         with:
           repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
@@ -60,7 +60,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
         with:
           submodules: recursive
       - name: Move /scripts to Working Directory
@@ -117,7 +117,7 @@ jobs:
           aws-region: eu-west-2
           role-session-name: role-session-name-${{ github.triggering_actor }}
       - name: Checkout da-tre-github-actions
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
         with:
           repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
@@ -127,7 +127,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
         with:
           submodules: recursive
       - name: Move /scripts to Working Directory

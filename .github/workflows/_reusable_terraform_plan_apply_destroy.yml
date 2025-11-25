@@ -80,7 +80,7 @@ jobs:
           aws-region: eu-west-2
       - run:  aws sts get-caller-identity
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
         with:
          ref: ${{ inputs.ref }}
       - name: Get vars from SSM
@@ -107,13 +107,13 @@ jobs:
       # Always store the plan if terraform plan detects changes and user has requested an apply
       - name: Store apply plan
         if: ${{ inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2 }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
         with:
           name: tfplan-${{ inputs.environment }}.out
           path: tfplan.out
       - name: wait-for-approval
         if: ${{ inputs.needs_approval && inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2}}
-        uses: trstringer/manual-approval@9f5e5d6bc511762e17f849775a3c56bdea6b4493
+        uses: trstringer/manual-approval@74d99dff7380e3e4b122d4ededcbca2b6ce59367
         timeout-minutes: 90
         with:
           secret: ${{ github.TOKEN }}
@@ -133,7 +133,7 @@ jobs:
           echo "TESTING_ENVIRONMENT=$TESTING_ENVIRONMENT" >> $GITHUB_ENV
       - name: Run system tests
         if: ${{ inputs.run_system_tests && steps.terraform_plan.outputs.exitcode == 2 }}
-        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@0.0.65
+        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@0.0.67
         with:
           source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
           target_role: ${{ secrets.TESTING_TARGET_ROLE }}
