@@ -79,9 +79,6 @@ runs:
       with:
         ecr_registry_path: "${{inputs.ecr_registry_path}}"
         aws-role: "${{ inputs.aws_role }}"
-    - name: ok to update
-      id: update_okay
-      uses: nationalarchives/da-tre-github-actions/update-allowed@0.0.10
       with:
         current-tag: "${{steps.latest-ecr-version-tag.outputs.latest-version}}"
         new-tag: "${{steps.latest_tag.outputs.tag}}"
