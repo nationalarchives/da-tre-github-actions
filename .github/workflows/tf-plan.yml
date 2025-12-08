@@ -45,7 +45,7 @@ jobs:
           aws-region: eu-west-2
           role-session-name: github-username-${{ github.triggering_actor }}
       - name: Checkout da-tre-github-actions
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
@@ -55,7 +55,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           submodules: recursive
       - name: Setting terraform version
