@@ -44,13 +44,13 @@ jobs:
       - name: Set friendly logs_url
         run: echo "CLOUDWATCH_LOGS_URL=${CLOUDWATCH_LOGS_BASE_URL}${LOG_GROUP_NAME}/log-events/${LOG_STREAM_NAME}" >> $GITHUB_ENV
       - name: Configure AWS credentials for test AWS role
-        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: eu-west-2
           role-session-name: github-username-${{ github.triggering_actor }}
       - name: Checkout da-tre-github-actions
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
@@ -60,7 +60,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           submodules: recursive
       - name: Move /scripts to Working Directory
@@ -111,13 +111,13 @@ jobs:
       - name: Set friendly logs_url
         run: echo "CLOUDWATCH_LOGS_URL=${CLOUDWATCH_LOGS_BASE_URL}${LOG_GROUP_NAME}/log-events/${LOG_STREAM_NAME}" >> $GITHUB_ENV
       - name: Configure AWS credentials for test AWS role
-        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: eu-west-2
           role-session-name: role-session-name-${{ github.triggering_actor }}
       - name: Checkout da-tre-github-actions
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
@@ -127,7 +127,7 @@ jobs:
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           submodules: recursive
       - name: Move /scripts to Working Directory
