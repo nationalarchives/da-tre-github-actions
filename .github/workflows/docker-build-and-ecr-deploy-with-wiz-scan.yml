@@ -59,7 +59,7 @@ jobs:
       - name: Docker build and tag
         shell: bash
         run: |
-          docker build -f Dockerfile \
+          docker build --output=type=docker -f Dockerfile \
           --tag "${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}" \
           "${{ inputs.build_dir }}"
           docker images
