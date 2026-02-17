@@ -60,6 +60,7 @@ runs:
         fi
         docker build \
         $build_arg \
+        --output=type=docker \
         --tag "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_VERSION}" \
         "${{ inputs.dockerfile-dir }}"
         docker images
