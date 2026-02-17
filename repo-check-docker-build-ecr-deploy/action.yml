@@ -104,7 +104,7 @@ runs:
         aws-region: eu-west-2
         role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
     - name: build and push
-      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.45
+      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.77
       with:
         ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}"
         docker-file: "${{inputs.docker_file}}"
