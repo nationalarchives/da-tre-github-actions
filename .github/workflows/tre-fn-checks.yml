@@ -53,7 +53,7 @@ jobs:
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Get AWS CodeArtifact pip URL
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.77
         with:
           repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
           domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
@@ -85,7 +85,7 @@ jobs:
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Get AWS CodeArtifact pip URL
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@0.0.77
         with:
           repository: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
           domain: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
