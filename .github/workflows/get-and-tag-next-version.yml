@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Get the version to use to tag this build
         id: build-tag
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.69
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info

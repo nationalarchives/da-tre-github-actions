@@ -36,24 +36,24 @@ jobs:
           printf 'github.api_url=%s\n' "${{ github.api_url }}"
           printf 'inputs.python_version=%s\n' "${{ inputs.python_version }}"
       - name: Checkout current
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Get the version to use to tag this build
         id: build-tag
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.69
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info
         run: |
           printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
       - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Build and push Docker image to AWS ECR
-        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.77
+        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr
         with:
           dockerfile-dir: ${{ inputs.build_dir }}
           image-name: ${{ inputs.docker_image_name }}
