@@ -69,22 +69,35 @@ runs:
     - name: Download Wiz CLI
       shell: bash
       run: |
-        curl -o wizcli https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64
+        curl -Lo wizcli https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64
         curl -Lo /tmp/wizcli-sha256 https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64-sha256
         curl -Lo /tmp/wizcli-sha256.sig https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64-sha256.sig
         chmod +x wizcli
-        curl -Lo public_key.asc https://downloads.wiz.io/wizcli/public_key.asc
-        gpg --import public_key.asc
-        gpg --verify /tmp/wizcli-sha256.sig /tmp/wizcli-sha256
-        echo "$(cat /tmp/wizcli-sha256) wizcli" | sha256sum --check
-    - name: Wiz scan
+    - name: Verify Wiz CLI signature
       shell: bash
       env:
         WIZ_CLIENT_ID: ${{ inputs.wiz-client-id }}
         WIZ_CLIENT_SECRET: ${{ inputs.wiz-client-secret }}
       run: |
-        ./wizcli scan dir --name ${{ inputs.image-name }}-${{github.run_number}} --projects ${{ inputs.wiz-project-tre}} .
-        ./wizcli scan container-image --projects ${{ inputs.wiz-project-tre}} ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}:${{ inputs.image-version }}
+        curl -Lo public_key.asc https://downloads.wiz.io/wizcli/public_key.asc
+        gpg --import public_key.asc
+        gpg --verify /tmp/wizcli-sha256.sig /tmp/wizcli-sha256
+        echo "$(cat /tmp/wizcli-sha256) wizcli" | sha256sum --check
+    - name: Set Wiz environment variables
+      shell: bash
+      run: |
+        echo "WIZ_CLIENT_ID=${{ inputs.wiz-client-id }}" >> $GITHUB_ENV
+        echo "WIZ_CLIENT_SECRET=${{ inputs.wiz-client-secret }}" >> $GITHUB_ENV
+    - name: Run Wiz CLI directory scan
+      shell: bash
+      run: >-
+        ./wizcli scan dir .
+        --name ${{ inputs.image-name }}-${{github.run_number}} --project ${{ inputs.wiz-project-tre}}
+    - name: Wiz Container Image Scan
+      shell: bash
+      run: >-
+        ./wizcli scan container-image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}:${{ inputs.image-version }}
+        --project ${{ inputs.wiz-project-tre}}
     - name: 'AWS ECR docker push'
       shell: bash
       env:

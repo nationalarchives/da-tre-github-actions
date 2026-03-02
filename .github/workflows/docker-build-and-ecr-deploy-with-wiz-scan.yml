@@ -32,6 +32,9 @@ permissions:
 jobs:
   build-deploy-and-tag-ecr-image:
     runs-on: ubuntu-latest
+    env:
+      WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
+      WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
     steps:
       - name: Diagnostic info
         run: |
@@ -41,7 +44,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Get the version to use to tag this build
         id: build-tag
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.77
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.79
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info
@@ -65,22 +68,25 @@ jobs:
           docker images
       - name: Download Wiz CLI
         run: |
-          curl -o wizcli https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64
+          curl -Lo wizcli https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64
           curl -Lo /tmp/wizcli-sha256 https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64-sha256
           curl -Lo /tmp/wizcli-sha256.sig https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64-sha256.sig
           chmod +x wizcli
+      - name: Verify Wiz CLI signature
+        run: |
           curl -Lo public_key.asc https://downloads.wiz.io/wizcli/public_key.asc
           gpg --import public_key.asc
           gpg --verify /tmp/wizcli-sha256.sig /tmp/wizcli-sha256
           echo "$(cat /tmp/wizcli-sha256) wizcli" | sha256sum --check
-      - name: Wiz scan
-        env:
-          WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
-          WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
-        run: |
-          ./wizcli scan dir --name ${{ inputs.docker_image_name }}-${{github.run_number}} --projects ${{ secrets.WIZ_PROJECT_TRE}} .
-          ./wizcli scan container-image --projects ${{ secrets.WIZ_PROJECT_TRE}} ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}
-      - name: "AWS ECR docker push"
+      - name: Run Wiz CLI directory scan
+        run: >-
+          ./wizcli scan dir .
+          --name ${{ inputs.docker_image_name }}-${{github.run_number}} --project ${{ secrets.WIZ_PROJECT_TRE}}
+      - name: Wiz Container Image Scan
+        run: >-
+          ./wizcli scan container-image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}
+          --project ${{ secrets.WIZ_PROJECT_TRE}}
+      - name: 'AWS ECR docker push'
         shell: bash
         run: |
           docker push "${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}"
