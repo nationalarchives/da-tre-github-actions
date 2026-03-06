@@ -27,8 +27,8 @@ on:
       WIZ_PROJECT_TRE:
         required: true
 permissions:
-  id-token: write  # required by aws-actions/configure-aws-credentials
-  contents: write  # to push new git tag
+  id-token: write # required by aws-actions/configure-aws-credentials
+  contents: write # to push new git tag
 jobs:
   build-deploy-and-tag-ecr-image:
     runs-on: ubuntu-latest
@@ -95,5 +95,8 @@ jobs:
           git tag ${{ steps.build-tag.outputs.next-version }}
           git push origin ${{ steps.build-tag.outputs.next-version }}
       - name: Wiz Docker Tag
+        env:
+          WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
+          WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
         run: |
           ./wizcli tag ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}

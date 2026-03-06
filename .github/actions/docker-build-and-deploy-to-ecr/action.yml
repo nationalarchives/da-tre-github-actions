@@ -75,6 +75,9 @@ runs:
         chmod +x wizcli
     - name: Verify Wiz CLI signature
       shell: bash
+      env:
+        WIZ_CLIENT_ID: ${{ inputs.wiz-client-id }}
+        WIZ_CLIENT_SECRET: ${{ inputs.wiz-client-secret }}
       run: |
         curl -Lo public_key.asc https://downloads.wiz.io/wizcli/public_key.asc
         gpg --import public_key.asc
@@ -122,5 +125,8 @@ runs:
         docker push "${REGISTRY}/${REGISTRY_PATH}/${IMAGE_NAME}:${IMAGE_TAG}"
     - name: Wiz Docker Tag
       shell: bash
+      env:
+        WIZ_CLIENT_ID: ${{ inputs.wiz-client-id }}
+        WIZ_CLIENT_SECRET: ${{ inputs.wiz-client-secret }}
       run: |
         ./wizcli tag ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr-registry-path }}/${{ inputs.image-name }}:${{ inputs.image-version }}
