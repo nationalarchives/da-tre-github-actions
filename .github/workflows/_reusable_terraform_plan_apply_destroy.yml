@@ -89,7 +89,7 @@ jobs:
           --with-decryption --query "Parameters[*].Value" \
           --output text > ssm.tfvars.json
           cat "ssm.tfvars.json"
-      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+      - uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85
         with:
           terraform_version: ${{ vars.TERRAFORM_VERSION }}
           terraform_wrapper: true
@@ -107,7 +107,7 @@ jobs:
       # Always store the plan if terraform plan detects changes and user has requested an apply
       - name: Store apply plan
         if: ${{ inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2 }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: tfplan-${{ inputs.environment }}.out
           path: tfplan.out
@@ -133,7 +133,7 @@ jobs:
           echo "TESTING_ENVIRONMENT=$TESTING_ENVIRONMENT" >> $GITHUB_ENV
       - name: Run system tests
         if: ${{ inputs.run_system_tests && steps.terraform_plan.outputs.exitcode == 2 }}
-        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@e5261245e37488b920d48c7821a83e3030b21db4 # v0.0.80
+        uses: nationalarchives/da-tre-github-actions/.github/actions/run-system-tests@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
         with:
           source_role: ${{ secrets.TESTING_SOURCE_ROLE }}
           target_role: ${{ secrets.TESTING_TARGET_ROLE }}
