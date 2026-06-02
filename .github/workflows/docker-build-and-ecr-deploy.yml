@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Get the version to use to tag this build
         id: build-tag
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@c9627f7195689c971fba8017c74005264bb490ba # 0.0.83
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info
@@ -53,7 +53,7 @@ jobs:
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Build and push Docker image to AWS ECR
-        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
+        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@c9627f7195689c971fba8017c74005264bb490ba # 0.0.83
         with:
           dockerfile-dir: ${{ inputs.build_dir }}
           image-name: ${{ inputs.docker_image_name }}
