@@ -86,17 +86,11 @@ runs:
         gpg --import public_key.asc
         gpg --verify /tmp/wizcli-sha256.sig /tmp/wizcli-sha256
         echo "$(cat /tmp/wizcli-sha256) wizcli" | sha256sum --check
-    - name: Set Wiz environment variables
+    - name: Run Wiz CLI directory scan
       shell: bash
       env:
         WIZ_CLIENT_ID: ${{ inputs.wiz-client-id }}
         WIZ_CLIENT_SECRET: ${{ inputs.wiz-client-secret }}
-      run: |
-        echo "WIZ_CLIENT_ID=${WIZ_CLIENT_ID}" >> $GITHUB_ENV
-        echo "WIZ_CLIENT_SECRET=${WIZ_CLIENT_SECRET}" >> $GITHUB_ENV
-    - name: Run Wiz CLI directory scan
-      shell: bash
-      env:
         IMAGE_NAME: ${{ inputs.image-name }}
         RUN_NUMBER: ${{ github.run_number }}
         WIZ_PROJECT_TRE: ${{ inputs.wiz-project-tre }}
@@ -106,6 +100,8 @@ runs:
     - name: Wiz Container Image Scan
       shell: bash
       env:
+        WIZ_CLIENT_ID: ${{ inputs.wiz-client-id }}
+        WIZ_CLIENT_SECRET: ${{ inputs.wiz-client-secret }}
         REGISTRY: ${{ steps.aws-ecr-login.outputs.registry }}
         REGISTRY_PATH: ${{ inputs.ecr-registry-path }}
         IMAGE_NAME: ${{ inputs.image-name }}
