@@ -68,10 +68,15 @@ runs:
     # Exit if already deployed
     - name: stop if deployed
       shell: bash
+      env:
+        ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
+        ECR_CREATED: ${{ steps.create-ecr-repo.outputs.created }}
+        LATEST_TAG: ${{ steps.latest_tag.outputs.tag }}
+        VERSION_DEPLOYED: ${{ steps.deployed.outputs.version-deployed }}
       run: |
-        echo "registry ${{inputs.ecr_registry_path}} created ${{steps.create-ecr-repo.outputs.created}}"
-        echo "version ${{steps.latest_tag.outputs.tag}} deployed  ${{steps.deployed.outputs.version-deployed}}"
-        if [ ${{steps.deployed.outputs.version-deployed}} -eq 1 ];  then exit 1; fi
+        echo "registry ${ECR_REGISTRY_PATH} created ${ECR_CREATED}"
+        echo "version ${LATEST_TAG} deployed  ${VERSION_DEPLOYED}"
+        if [ "${VERSION_DEPLOYED}" -eq 1 ];  then exit 1; fi
     # Get the latest pushed version
     - name: latest version
       id: latest-ecr-version-tag
@@ -94,11 +99,13 @@ runs:
     - name: Split registry
       id: registry
       shell: bash
+      env:
+        ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
       run: |
-        echo "image-name=$(cut -d'/' -f2 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
-        echo "ecr-registry-path=$(cut -d'/' -f1 <<< ${{inputs.ecr_registry_path}})" >> $GITHUB_OUTPUT
+        echo "image-name=$(cut -d'/' -f2 <<< "${ECR_REGISTRY_PATH}")" >> $GITHUB_OUTPUT
+        echo "ecr-registry-path=$(cut -d'/' -f1 <<< "${ECR_REGISTRY_PATH}")" >> $GITHUB_OUTPUT
     - name: login
-      uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+      uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
       with:
         role-to-assume: ${{ inputs.aws-role }}
         aws-region: eu-west-2

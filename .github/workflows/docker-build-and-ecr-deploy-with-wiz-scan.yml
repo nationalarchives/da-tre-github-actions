@@ -37,9 +37,12 @@ jobs:
       WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
     steps:
       - name: Diagnostic info
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+          API_URL: ${{ github.api_url }}
         run: |
-          printf 'github.event.repository.name=%s\n' "${{ github.event.repository.name }}"
-          printf 'github.api_url=%s\n' "${{ github.api_url }}"
+          printf 'github.event.repository.name=%s\n' "${REPO_NAME}"
+          printf 'github.api_url=%s\n' "${API_URL}"
       - name: Checkout current
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Get the version to use to tag this build
@@ -48,10 +51,12 @@ jobs:
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info
+        env:
+          NEXT_VERSION: ${{ steps.build-tag.outputs.next-version }}
         run: |
-          printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
+          printf 'steps.build-tag.outputs.next-version=%s\n' "${NEXT_VERSION}"
       - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
@@ -61,10 +66,16 @@ jobs:
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
       - name: Docker build and tag
         shell: bash
+        env:
+          ECR_REGISTRY: ${{ steps.aws-ecr-login.outputs.registry }}
+          ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
+          DOCKER_IMAGE_NAME: ${{ inputs.docker_image_name }}
+          NEXT_VERSION: ${{ steps.build-tag.outputs.next-version }}
+          BUILD_DIR: ${{ inputs.build_dir }}
         run: |
           docker buildx build --output=type=docker --provenance=false --sbom=false -f Dockerfile \
-          --tag "${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}" \
-          "${{ inputs.build_dir }}"
+          --tag "${ECR_REGISTRY}/${ECR_REGISTRY_PATH}/${DOCKER_IMAGE_NAME}:${NEXT_VERSION}" \
+          "${BUILD_DIR}"
           docker images
       - name: Download Wiz CLI
         run: |
@@ -79,24 +90,45 @@ jobs:
           gpg --verify /tmp/wizcli-sha256.sig /tmp/wizcli-sha256
           echo "$(cat /tmp/wizcli-sha256) wizcli" | sha256sum --check
       - name: Run Wiz CLI directory scan
+        env:
+          DOCKER_IMAGE_NAME: ${{ inputs.docker_image_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+          WIZ_PROJECT_TRE: ${{ secrets.WIZ_PROJECT_TRE }}
         run: >-
           ./wizcli scan dir .
-          --name ${{ inputs.docker_image_name }}-${{github.run_number}} --project ${{ secrets.WIZ_PROJECT_TRE}}
+          --name "${DOCKER_IMAGE_NAME}-${RUN_NUMBER}" --project "${WIZ_PROJECT_TRE}"
       - name: Wiz Container Image Scan
+        env:
+          ECR_REGISTRY: ${{ steps.aws-ecr-login.outputs.registry }}
+          ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
+          DOCKER_IMAGE_NAME: ${{ inputs.docker_image_name }}
+          NEXT_VERSION: ${{ steps.build-tag.outputs.next-version }}
+          WIZ_PROJECT_TRE: ${{ secrets.WIZ_PROJECT_TRE }}
         run: >-
-          ./wizcli scan container-image ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}
-          --project ${{ secrets.WIZ_PROJECT_TRE}}
+          ./wizcli scan container-image "${ECR_REGISTRY}/${ECR_REGISTRY_PATH}/${DOCKER_IMAGE_NAME}:${NEXT_VERSION}"
+          --project "${WIZ_PROJECT_TRE}"
       - name: 'AWS ECR docker push'
         shell: bash
+        env:
+          ECR_REGISTRY: ${{ steps.aws-ecr-login.outputs.registry }}
+          ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
+          DOCKER_IMAGE_NAME: ${{ inputs.docker_image_name }}
+          NEXT_VERSION: ${{ steps.build-tag.outputs.next-version }}
         run: |
-          docker push "${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}"
+          docker push "${ECR_REGISTRY}/${ECR_REGISTRY_PATH}/${DOCKER_IMAGE_NAME}:${NEXT_VERSION}"
       - name: Add Git tag for this build
+        env:
+          NEXT_VERSION: ${{ steps.build-tag.outputs.next-version }}
         run: |
-          git tag ${{ steps.build-tag.outputs.next-version }}
-          git push origin ${{ steps.build-tag.outputs.next-version }}
+          git tag "${NEXT_VERSION}"
+          git push origin "${NEXT_VERSION}"
       - name: Wiz Docker Tag
         env:
           WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
           WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+          ECR_REGISTRY: ${{ steps.aws-ecr-login.outputs.registry }}
+          ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
+          DOCKER_IMAGE_NAME: ${{ inputs.docker_image_name }}
+          NEXT_VERSION: ${{ steps.build-tag.outputs.next-version }}
         run: |
-          ./wizcli tag ${{ steps.aws-ecr-login.outputs.registry }}/${{ inputs.ecr_registry_path }}/${{ inputs.docker_image_name }}:${{ steps.build-tag.outputs.next-version }}
+          ./wizcli tag "${ECR_REGISTRY}/${ECR_REGISTRY_PATH}/${DOCKER_IMAGE_NAME}:${NEXT_VERSION}"

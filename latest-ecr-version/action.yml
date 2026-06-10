@@ -16,7 +16,7 @@ runs:
   using: "composite"
   steps:
     - name: login
-      uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+      uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
       with:
         role-to-assume: ${{ inputs.aws-role }}
         aws-region: eu-west-2
@@ -24,21 +24,26 @@ runs:
     - name: Get latest image details
       id: latest-ecr-version-file
       shell: bash
+      env:
+        ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
       run: |
-        aws ecr describe-images --repository-name "${{inputs.ecr_registry_path}}" --filter tagStatus=TAGGED --query 'sort_by(imageDetails,& imagePushedAt)[-1]' > ecr_versions.json
+        aws ecr describe-images --repository-name "${ECR_REGISTRY_PATH}" --filter tagStatus=TAGGED --query 'sort_by(imageDetails,& imagePushedAt)[-1]' > ecr_versions.json
         echo "latest-image<<EOF" >> $GITHUB_OUTPUT
         cat ecr_versions.json >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
     - name: get latest version
       id: latest
       shell: bash
+      env:
+        IMAGE_TAG_0: ${{ fromJson(steps.latest-ecr-version-file.outputs.latest-image).imageTags[0] }}
+        IMAGE_TAG_1: ${{ fromJson(steps.latest-ecr-version-file.outputs.latest-image).imageTags[1] }}
       run: |
         if ! [ -f ecr_versions.json ]; then
           echo "latest-version=0.0" >> $GITHUB_OUTPUT
         fi
         if [ -f ecr_versions.json ]; then
-           echo "latest-version=${{fromJson(steps.latest-ecr-version-file.outputs.latest-image).imageTags[0]}}" >> $GITHUB_OUTPUT
+           echo "latest-version=${IMAGE_TAG_0}" >> $GITHUB_OUTPUT
         fi
-        if [ -f ecr_versions.json ] && [ "$(grep -c imageTags ecr_versions.json)" > 1 ] && [ ${{fromJson(steps.latest-ecr-version-file.outputs.latest-image).imageTags[0]}} == "latest" ];  then
-           echo "latest-version=${{fromJson(steps.latest-ecr-version-file.outputs.latest-image).imageTags[1]}}" >> $GITHUB_OUTPUT ;
+        if [ -f ecr_versions.json ] && [ "$(grep -c imageTags ecr_versions.json)" > 1 ] && [ "${IMAGE_TAG_0}" == "latest" ];  then
+           echo "latest-version=${IMAGE_TAG_1}" >> $GITHUB_OUTPUT ;
         fi

@@ -18,7 +18,7 @@ runs:
   using: "composite"
   steps:
     - name: login
-      uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+      uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
       with:
         role-to-assume: ${{ inputs.aws-role }}
         aws-region: eu-west-2
@@ -26,20 +26,25 @@ runs:
     - name: describe images
       id: image-versions
       shell: bash
+      env:
+        ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
       run: |
-        aws ecr list-images --repository-name="${{inputs.ecr_registry_path}}" --filter tagStatus=TAGGED > images.json
+        aws ecr list-images --repository-name="${ECR_REGISTRY_PATH}" --filter tagStatus=TAGGED > images.json
         echo "images<<EOF" >> $GITHUB_OUTPUT
         cat images.json >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
     - name: Check if version deployed
       id: deployed
       shell: bash
+      env:
+        IMAGE_TAGS_JSON: ${{ toJson(fromJson(steps.image-versions.outputs.images).imageIds.*.imageTag) }}
+        NEW_TAG: ${{ inputs.new-tag }}
       run: |
         echo "{}" > ecr-tags.json
         if ! [ "$(grep -c imageTag images.json)" -eq 0 ]; then
-         echo "${{toJson(fromJson(steps.image-versions.outputs.images).imageIds.*.imageTag)}}" > ecr-tags.json ;
+         echo "${IMAGE_TAGS_JSON}" > ecr-tags.json ;
         fi
-        if [ "$(grep -c ${{ inputs.new-tag }} ecr-tags.json)" -eq 1 ]; then
+        if [ "$(grep -c "${NEW_TAG}" ecr-tags.json)" -eq 1 ]; then
          echo "deployed"
          echo "version-deployed=1" >> $GITHUB_OUTPUT ;
         else
