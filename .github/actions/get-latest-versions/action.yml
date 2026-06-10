@@ -22,15 +22,12 @@ runs:
         # The following cd command does not persist across steps
         cd "${ACTION_PATH}"
         pip install --requirement requirements.txt
-    - name: 'Set PYTHONPATH to "${{ github.action_path }}"'
-      shell: bash
-      env:
-        ACTION_PATH: ${{ github.action_path }}
-      run: |
-        echo "PYTHONPATH=${ACTION_PATH}" >> $GITHUB_ENV
     - name: 'Get versions for all the tre repositories"'
       id: get-versions
       shell: python
+      env:
+        PYTHONPATH: ${{ github.action_path }}
+        GITHUB_API_TOKEN: ${{ inputs.github_token }}
       run: |
         import os
         from get_latest_versions import get_latest_versions
@@ -41,5 +38,3 @@ runs:
         # Save step output values in GitHub's step output file
         with open(os.getenv('GITHUB_OUTPUT'), 'a') as f:
             f.write(f'all-latest-versions={all_latest_versions}')
-      env:
-        GITHUB_API_TOKEN: ${{ inputs.github_token }}

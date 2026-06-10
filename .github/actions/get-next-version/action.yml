@@ -27,16 +27,11 @@ runs:
         # The following cd command does not persist across steps
         cd "${ACTION_PATH}"
         pip install --requirement requirements.txt
-    - name: 'Set PYTHONPATH to "${{ github.action_path }}"'
-      shell: bash
-      env:
-        ACTION_PATH: ${{ github.action_path }}
-      run: |
-        echo "PYTHONPATH=${ACTION_PATH}" >> $GITHUB_ENV
     - name: 'Get next version for repository "${{ inputs.repo-name }}"'
       id: next-tag
       shell: python
       env:
+        PYTHONPATH: ${{ github.action_path }}
         INPUT_REPO_NAME: ${{ inputs.repo-name }}
         INPUT_VERSION_SUFFIX: ${{ inputs.version-suffix }}
       run: |
