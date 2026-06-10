@@ -41,6 +41,8 @@ jobs:
           printf 'inputs.python_version=%s\n' "${PYTHON_VERSION}"
       - name: Checkout current
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: true
       - name: Get the version to use to tag this build
         id: build-tag
         uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
