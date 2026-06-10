@@ -84,8 +84,10 @@ jobs:
         with:
          ref: ${{ inputs.ref }}
       - name: Get vars from SSM
+        env:
+          SSM_VARS_FILE: ${{ inputs.ssm_vars_file }}
         run: |
-          aws ssm get-parameters --name ${{ inputs.ssm_vars_file }} \
+          aws ssm get-parameters --name "${SSM_VARS_FILE}" \
           --with-decryption --query "Parameters[*].Value" \
           --output text > ssm.tfvars.json
           cat "ssm.tfvars.json"
@@ -94,15 +96,19 @@ jobs:
           terraform_version: ${{ vars.TERRAFORM_VERSION }}
           terraform_wrapper: true
       - name: Terraform init
+        env:
+          TF_WORKSPACE: ${{ inputs.workspace }}
         run: |
           terraform init -reconfigure --backend-config=backend.conf
           terraform workspace list
-          terraform workspace select ${{ inputs.workspace }}
+          terraform workspace select "${TF_WORKSPACE}"
       - name: Terraform plan
         if: inputs.run_destroy == false
         id: terraform_plan
+        env:
+          SCM_VARS_FILE: ${{ inputs.scm_vars_file }}
         run: |
-           terraform plan -input=false -detailed-exitcode  -var-file ${{ inputs.scm_vars_file }} -var-file ssm.tfvars.json -out=tfplan.out
+           terraform plan -input=false -detailed-exitcode  -var-file "${SCM_VARS_FILE}" -var-file ssm.tfvars.json -out=tfplan.out
       # - run: echo "Wrapper exitcode was ${{ steps.terraform_plan.outputs.exitcode }}"
       # Always store the plan if terraform plan detects changes and user has requested an apply
       - name: Store apply plan
@@ -123,9 +129,11 @@ jobs:
           issue-body: "Please approve or deny the deployment of TREv2 to ${{ inputs.environment }}"
       - name: Terraform apply
         if: ${{ inputs.run_apply && steps.terraform_plan.outputs.exitcode == 2}}
+        env:
+          TF_WORKSPACE: ${{ inputs.workspace }}
         run: |
           terraform apply -input=false -auto-approve tfplan.out
-          echo "### Deployed $(git log -1 '--format=format:%H') to ${{ inputs.workspace }} :tada:" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployed $(git log -1 '--format=format:%H') to ${TF_WORKSPACE} :tada:" >> $GITHUB_STEP_SUMMARY
       - name: Get environment name for systems tests
         if: inputs.run_system_tests == true
         run: |
@@ -142,6 +150,9 @@ jobs:
           system_test_tags: ${{ inputs.system_test_tags }}
       - name: Terraform Destroy Plan
         if: ${{ inputs.run_destroy }}
+        env:
+          SCM_VARS_FILE: ${{ inputs.scm_vars_file }}
+          TF_WORKSPACE: ${{ inputs.workspace }}
         run: |
-          terraform  destroy -input=false -auto-approve -var-file ${{ inputs.scm_vars_file }} -var-file ssm.tfvars.json
-          echo "### Destroyed ${{ inputs.workspace }} :boom:" >> $GITHUB_STEP_SUMMARY
+          terraform  destroy -input=false -auto-approve -var-file "${SCM_VARS_FILE}" -var-file ssm.tfvars.json
+          echo "### Destroyed ${TF_WORKSPACE} :boom:" >> $GITHUB_STEP_SUMMARY

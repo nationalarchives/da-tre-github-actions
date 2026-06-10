@@ -18,26 +18,34 @@ runs:
   steps:
     - name: Setup
       shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        REPO_NAME: ${{ inputs.repo-name }}
       run: |
-        printf 'github.action_path=%s\n' "${{ github.action_path }}"
-        printf '$inputs.repo-name=%s\n' "${{ inputs.repo-name }}"
+        printf 'github.action_path=%s\n' "${ACTION_PATH}"
+        printf '$inputs.repo-name=%s\n' "${REPO_NAME}"
         # The following cd command does not persist across steps
-        cd '${{ github.action_path }}'
+        cd "${ACTION_PATH}"
         pip install --requirement requirements.txt
     - name: 'Set PYTHONPATH to "${{ github.action_path }}"'
       shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
       run: |
-        echo "PYTHONPATH=${{ github.action_path }}" >> $GITHUB_ENV
+        echo "PYTHONPATH=${ACTION_PATH}" >> $GITHUB_ENV
     - name: 'Get next version for repository "${{ inputs.repo-name }}"'
       id: next-tag
       shell: python
+      env:
+        INPUT_REPO_NAME: ${{ inputs.repo-name }}
+        INPUT_VERSION_SUFFIX: ${{ inputs.version-suffix }}
       run: |
         import os
         from get_next_version import get_next_version
 
         next_version = get_next_version(
-            repo_name='${{ inputs.repo-name }}',
-            version_suffix='${{ inputs.version-suffix }}'
+            repo_name=os.environ['INPUT_REPO_NAME'],
+            version_suffix=os.environ['INPUT_VERSION_SUFFIX']
         )
 
         # Save step output values in GitHub's step output file

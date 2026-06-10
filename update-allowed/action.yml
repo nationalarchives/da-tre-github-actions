@@ -19,7 +19,10 @@ runs:
       shell: bash
     - id: update
       shell: bash
+      env:
+        CURRENT_TAG: ${{ inputs.current-tag }}
+        NEW_TAG: ${{ inputs.new-tag }}
       run: |
-        echo "current tag ${{ inputs.current-tag }} new tag ${{ inputs.new-tag }}"
-        check_version.sh ${{ inputs.current-tag }} ${{ inputs.new-tag }}
+        echo "current tag ${CURRENT_TAG} new tag ${NEW_TAG}"
+        check_version.sh "${CURRENT_TAG}" "${NEW_TAG}"
         echo "update-suggested=$?" >> $GITHUB_OUTPUT

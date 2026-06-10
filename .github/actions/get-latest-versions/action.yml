@@ -15,15 +15,19 @@ runs:
   steps:
     - name: Setup
       shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
       run: |
-        printf 'github.action_path=%s\n' "${{ github.action_path }}"
+        printf 'github.action_path=%s\n' "${ACTION_PATH}"
         # The following cd command does not persist across steps
-        cd '${{ github.action_path }}'
+        cd "${ACTION_PATH}"
         pip install --requirement requirements.txt
     - name: 'Set PYTHONPATH to "${{ github.action_path }}"'
       shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
       run: |
-        echo "PYTHONPATH=${{ github.action_path }}" >> $GITHUB_ENV
+        echo "PYTHONPATH=${ACTION_PATH}" >> $GITHUB_ENV
     - name: 'Get versions for all the tre repositories"'
       id: get-versions
       shell: python

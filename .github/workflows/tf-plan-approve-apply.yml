@@ -82,14 +82,18 @@ jobs:
           ./scripts/plan.sh
       - name: Notify Sucess
         if: success()
+        env:
+          TF_DIR: ${{ inputs.tf_dir }}
         run: |
-          ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/plan.txt"
+          ./scripts/send_to_cloud_watch.py -c -f "${TF_DIR}/plan.txt"
           ./scripts/send_to_slack.py -m "Approval requested for <$CLOUDWATCH_LOGS_URL|terraform plan> in \`$TRE_ENV\` for <$GITHUB_URL|workflow> by \`$TRIGGERING_ACTOR\`"
       - name: Notify Failure
         if: ${{ failure() }}
+        env:
+          TF_DIR: ${{ inputs.tf_dir }}
         run: |
-          if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
-            ./scripts/send_to_cloud_watch.py -c -f "${{ inputs.tf_dir }}/error.txt";
+          if [ -s "${TF_DIR}/error.txt" ]; then  \
+            ./scripts/send_to_cloud_watch.py -c -f "${TF_DIR}/error.txt";
             echo "Error.txt send to $CLOUDWATCH_LOGS_URL";
           fi
   approve:
@@ -99,9 +103,12 @@ jobs:
     environment: apply-tf-plan-to-${{ inputs.github_environment }}
     steps:
       - name: Manual Approve Info
+        env:
+          TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+          ACTOR: ${{ github.actor }}
         run: |
-          echo ${{ github.triggering_actor }}
-          echo ${{ github.actor }}
+          echo "${TRIGGERING_ACTOR}"
+          echo "${ACTOR}"
   apply:
     runs-on: ubuntu-latest
     needs:
@@ -149,12 +156,16 @@ jobs:
           ./scripts/apply.sh
       - name: Notify Sucess
         if: success()
+        env:
+          TF_DIR: ${{ inputs.tf_dir }}
         run: |
-          ./scripts/send_to_cloud_watch.py -f "${{ inputs.tf_dir }}/apply.out"
+          ./scripts/send_to_cloud_watch.py -f "${TF_DIR}/apply.out"
       - name: Notify Failure
         if: failure()
+        env:
+          TF_DIR: ${{ inputs.tf_dir }}
         run: |
-          if [ -s "${{ inputs.tf_dir }}/error.txt" ]; then  \
-            ./scripts/send_to_cloud_watch.py -f "${{ inputs.tf_dir }}/error.txt";
+          if [ -s "${TF_DIR}/error.txt" ]; then  \
+            ./scripts/send_to_cloud_watch.py -f "${TF_DIR}/error.txt";
             echo "Error.txt send to $CLOUDWATCH_LOGS_URL";
           fi
