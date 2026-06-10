@@ -20,7 +20,7 @@ runs:
       with:
         role-to-assume: ${{ inputs.aws-role }}
         aws-region: eu-west-2
-        role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+        role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
     - name: Get latest image details
       id: latest-ecr-version-file
       shell: bash

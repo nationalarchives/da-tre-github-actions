@@ -109,7 +109,7 @@ runs:
       with:
         role-to-assume: ${{ inputs.aws-role }}
         aws-region: eu-west-2
-        role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+        role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
     - name: build and push
       uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.79
       with:

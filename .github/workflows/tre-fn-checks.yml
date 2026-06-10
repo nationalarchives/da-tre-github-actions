@@ -51,7 +51,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+          role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Get AWS CodeArtifact pip URL
         uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
         with:
@@ -86,7 +86,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+          role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Get AWS CodeArtifact pip URL
         uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
         with:

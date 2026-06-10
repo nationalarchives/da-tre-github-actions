@@ -43,7 +43,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: eu-west-2
-          role-session-name: github-username-${{ github.triggering_actor }}
+          role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Checkout da-tre-github-actions
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
