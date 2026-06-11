@@ -58,10 +58,15 @@
       - name: Commit files
         id: file_commit
         shell: bash
+        env:
+          GPG_EMAIL: ${{ steps.import-gpg.outputs.email }}
+          GPG_NAME: ${{ steps.import-gpg.outputs.name }}
+          FIELD: ${{ inputs.field }}
+          VALUE: ${{ inputs.value }}
         run: |
-         git config --global user.email "${{ steps.import-gpg.outputs.email }}"
-         git config --global user.name "${{ steps.import-gpg.outputs.name }}"
+         git config --global user.email "${GPG_EMAIL}"
+         git config --global user.name "${GPG_NAME}"
          git add -A
-         git commit -m "updating ${{ inputs.field }} with ${{ inputs.value }}"
-         echo "branch=${{ inputs.field }}_${{ inputs.value }}" >> $GITHUB_OUTPUT
-         git push -u origin ${{ inputs.field }}_${{ inputs.value }}
+         git commit -m "updating ${FIELD} with ${VALUE}"
+         echo "branch=${FIELD}_${VALUE}" >> $GITHUB_OUTPUT
+         git push -u origin "${FIELD}_${VALUE}"

@@ -46,12 +46,12 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+          role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Get AWS CodeArtifact pip URL
         uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
         with:
@@ -62,9 +62,12 @@ jobs:
           pip-url-output-file: ${{ inputs.pip-url-output-file }}
       - name: Run unit tests
         shell: bash
+        env:
+          PIP_URL_OUTPUT_FILE: ${{ inputs.pip-url-output-file }}
+          REQUIREMENTS_TXT: ${{ inputs.requirements_txt }}
         run: |
-          export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
-          pip install -r ${{ inputs.requirements_txt }}
+          export PIP_INDEX_URL="$(cat "${PIP_URL_OUTPUT_FILE}")"
+          pip install -r "${REQUIREMENTS_TXT}"
           cd tests/units
           python -m unittest discover
   check-feature-tests:
@@ -78,12 +81,12 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
           # triggering-actor could differ for re-runs: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
+          role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Get AWS CodeArtifact pip URL
         uses: nationalarchives/da-tre-github-actions/.github/actions/get-aws-codeartifact-pip-url@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
         with:
@@ -94,9 +97,12 @@ jobs:
           pip-url-output-file: ${{ inputs.pip-url-output-file }}
       - name: Run feature tests
         shell: bash
+        env:
+          PIP_URL_OUTPUT_FILE: ${{ inputs.pip-url-output-file }}
+          REQUIREMENTS_TXT: ${{ inputs.requirements_txt }}
         run: |
-          export PIP_INDEX_URL="$(cat "${{ inputs.pip-url-output-file }}")"
-          pip install -r ${{ inputs.requirements_txt }}
+          export PIP_INDEX_URL="$(cat "${PIP_URL_OUTPUT_FILE}")"
+          pip install -r "${REQUIREMENTS_TXT}"
           pip install behave
           cd tests
           behave

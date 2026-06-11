@@ -26,21 +26,28 @@ runs:
   steps:
     - name: AWS CodeArtifact login
       shell: bash
+      env:
+        AUTH_TOKEN_DURATION: ${{ inputs.auth-token-duration }}
+        DOMAIN: ${{ inputs.domain }}
+        DOMAIN_OWNER: ${{ inputs.domain-owner }}
+        AWS_REGION: ${{ inputs.aws-region }}
+        REPOSITORY: ${{ inputs.repository }}
+        PIP_URL_OUTPUT_FILE: ${{ inputs.pip-url-output-file }}
       run: |
         CA_AUTH_TOKEN="$( \
           aws codeartifact get-authorization-token \
-          --duration "${{ inputs.auth-token-duration }}" \
-          --domain "${{ inputs.domain }}" \
-          --domain-owner "${{ inputs.domain-owner }}" \
+          --duration "${AUTH_TOKEN_DURATION}" \
+          --domain "${DOMAIN}" \
+          --domain-owner "${DOMAIN_OWNER}" \
           --query authorizationToken \
           --output text \
         )"
 
-        echo "https://:${CA_AUTH_TOKEN}@${{ inputs.domain }}-${{ inputs.domain-owner }}.d.codeartifact.${{ inputs.aws-region }}.amazonaws.com/pypi/${{ inputs.repository }}/simple/" \
-          > "${{ inputs.pip-url-output-file }}"
+        echo "https://:${CA_AUTH_TOKEN}@${DOMAIN}-${DOMAIN_OWNER}.d.codeartifact.${AWS_REGION}.amazonaws.com/pypi/${REPOSITORY}/simple/" \
+          > "${PIP_URL_OUTPUT_FILE}"
 
         echo "Local file listing follows:"
         ls -la
 
         echo "SHA256 of pip-url-output-file follows:"
-        shasum -a 256 "${{ inputs.pip-url-output-file }}"
+        shasum -a 256 "${PIP_URL_OUTPUT_FILE}"
