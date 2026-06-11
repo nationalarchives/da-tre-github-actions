@@ -49,7 +49,7 @@ jobs:
           persist-credentials: true
       - name: Get the version to use to tag this build
         id: build-tag
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # 0.0.82
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@c9627f7195689c971fba8017c74005264bb490ba # 0.0.83
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info
