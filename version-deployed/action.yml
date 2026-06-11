@@ -44,7 +44,7 @@ runs:
         if ! [ "$(grep -c imageTag images.json)" -eq 0 ]; then
          echo "${IMAGE_TAGS_JSON}" > ecr-tags.json ;
         fi
-        if [ "$(grep -c "${NEW_TAG}" ecr-tags.json)" -eq 1 ]; then
+        if [ -n "${NEW_TAG}" ] && [ "$(grep -cF "\"${NEW_TAG}\"" ecr-tags.json)" -ge 1 ]; then
          echo "deployed"
          echo "version-deployed=1" >> $GITHUB_OUTPUT ;
         else

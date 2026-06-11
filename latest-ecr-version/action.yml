@@ -44,6 +44,6 @@ runs:
         if [ -f ecr_versions.json ]; then
            echo "latest-version=${IMAGE_TAG_0}" >> $GITHUB_OUTPUT
         fi
-        if [ -f ecr_versions.json ] && [ "$(grep -c imageTags ecr_versions.json)" > 1 ] && [ "${IMAGE_TAG_0}" == "latest" ];  then
+        if [ -f ecr_versions.json ] && [ -n "${IMAGE_TAG_1}" ] && [ "${IMAGE_TAG_0}" = "latest" ];  then
            echo "latest-version=${IMAGE_TAG_1}" >> $GITHUB_OUTPUT ;
         fi
