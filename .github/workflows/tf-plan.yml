@@ -49,6 +49,7 @@ jobs:
         with:
           repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
+          persist-credentials: false
       - name: Copy /scripts
         run: |
           pwd
@@ -58,6 +59,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: recursive
+          persist-credentials: false
       - name: Setting terraform version
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
         with:
