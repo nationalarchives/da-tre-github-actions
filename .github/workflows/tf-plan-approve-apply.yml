@@ -50,19 +50,21 @@ jobs:
           aws-region: eu-west-2
           role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Checkout da-tre-github-actions
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
+          persist-credentials: false
       - name: Copy /scripts
         run: |
           pwd
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: recursive
+          persist-credentials: false
       - name: Move /scripts to Working Directory
         run: |
           pwd
@@ -124,19 +126,21 @@ jobs:
           aws-region: eu-west-2
           role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Checkout da-tre-github-actions
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: nationalarchives/da-tre-github-actions
           ref: ${{ inputs.github_action_ref }}
+          persist-credentials: false
       - name: Copy /scripts
         run: |
           pwd
           ls -la ../
           cp -r scripts ../
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: recursive
+          persist-credentials: false
       - name: Move /scripts to Working Directory
         run: |
           pwd
