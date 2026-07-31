@@ -82,7 +82,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-         ref: ${{ inputs.ref }}
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
       - name: Get vars from SSM
         env:
           SSM_VARS_FILE: ${{ inputs.ssm_vars_file }}
