@@ -98,11 +98,11 @@ jobs:
           terraform_wrapper: true
       - name: Terraform init
         env:
-          TF_WORKSPACE: ${{ inputs.workspace }}
+          WORKSPACE_NAME: ${{ inputs.workspace }}
         run: |
           terraform init -reconfigure --backend-config=backend.conf
           terraform workspace list
-          terraform workspace select "${TF_WORKSPACE}"
+          terraform workspace select "$WORKSPACE_NAME"
       - name: Terraform plan
         if: inputs.run_destroy == false
         id: terraform_plan
