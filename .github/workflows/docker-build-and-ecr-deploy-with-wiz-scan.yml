@@ -49,7 +49,7 @@ jobs:
           persist-credentials: true
       - name: Get the version to use to tag this build
         id: build-tag
-        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@2e31dac8040257c400f3c555b172aa095b3117bb # 0.0.85
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@003782eb57eaa02bb766eed9bec67fdc523606ba # 0.0.87
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info
@@ -58,7 +58,7 @@ jobs:
         run: |
           printf 'steps.build-tag.outputs.next-version=%s\n' "${NEXT_VERSION}"
       - name: AWS credential setup
-        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
