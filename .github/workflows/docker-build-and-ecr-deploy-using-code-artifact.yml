@@ -83,7 +83,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           pip-url-output-file: ${{ inputs.pip_url_output_file }}
       - name: Build and push Docker image to AWS ECR
-        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@2e31dac8040257c400f3c555b172aa095b3117bb # 0.0.85
+        uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@003782eb57eaa02bb766eed9bec67fdc523606ba # 0.0.87
         with:
           dockerfile-dir: ${{ inputs.build_dir }}
           image-name: ${{ inputs.docker_image_name }}
