@@ -27,7 +27,9 @@ jobs:
           printf 'steps.build-tag.outputs.next-version=%s\n' "${NEXT_VERSION}"
       - name: Add Git tag for this build
         env:
+          GH_TOKEN: ${{ github.token }}
           NEXT_VERSION: ${{ steps.build-tag.outputs.next-version }}
         run: |
-          git tag "${NEXT_VERSION}"
-          git push origin "${NEXT_VERSION}"
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
+            -f ref="refs/tags/${NEXT_VERSION}" \
+            -f sha="$(git rev-parse HEAD)"
