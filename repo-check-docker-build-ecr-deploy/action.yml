@@ -117,7 +117,7 @@ runs:
       with:
         ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}"
         docker-file: "${{inputs.docker_file}}"
-        sixlabors-license-key: ${{ secrets.sixlabors-license-key }}
+        sixlabors-license-key: ${{ inputs.sixlabors-license-key }}
         dockerfile-dir: "."
         image-name: "${{steps.registry.outputs.image-name}}"
         aws-region: "eu-west-2"
