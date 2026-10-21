@@ -36,7 +36,9 @@ inputs:
   wiz-project-tre:
     type: string
     required: true
-
+  sixlabors-license-key:
+    description: 'Optional Six Labors licence key passed to the Docker build action'
+    required: false
 outputs:
   version:
     description: version to update
@@ -111,10 +113,11 @@ runs:
         aws-region: eu-west-2
         role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
     - name: build and push
-      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.79
+      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@0.0.91
       with:
         ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}"
         docker-file: "${{inputs.docker_file}}"
+        sixlabors-license-key: ${{ secrets.sixlabors-license-key }}
         dockerfile-dir: "."
         image-name: "${{steps.registry.outputs.image-name}}"
         aws-region: "eu-west-2"
