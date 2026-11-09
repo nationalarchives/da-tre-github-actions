@@ -10,6 +10,18 @@ main() {
   v_old_in="${1}"
   v_new_in="${2}"
 
+  # Both must be version numbers (optional v prefix, then up to three dot separated numbers);
+  # anything else cannot be compared and must not reach the arithmetic below
+  local version_regex='^v?[0-9]+(\.[0-9]+){0,2}$'
+  if ! [[ "${v_old_in}" =~ ${version_regex} ]]; then
+    printf 'Current version is not a version number: %s\n' "${v_old_in}"
+    return 1
+  fi
+  if ! [[ "${v_new_in}" =~ ${version_regex} ]]; then
+    printf 'New version is not a version number: %s\n' "${v_new_in}"
+    return 1
+  fi
+
   # Use tr to remove any v prefix (it's OK if other v characters get dropped)
   local v_old
   v_old="$(printf '%s' "${v_old_in}" | tr -d 'v')"
