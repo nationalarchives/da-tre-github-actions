@@ -1,13 +1,13 @@
 # Action to get latest pushed image
-name: 'Get latest deployed'
-description: 'Gets the tag of the latest pushed image or 0.0 if no image or latest image not tagged'
+name: "Get latest deployed"
+description: "Gets the tag of the latest pushed release image, or 0.0.0 if there is none"
 inputs:
   ecr_registry_path:
     type: string
     required: true
   aws-role:
     required: true
-    description: 'AWS role allowed to read ECR'
+    description: "AWS role allowed to read ECR"
 outputs:
   latest-version:
     description: latest version
@@ -21,29 +21,19 @@ runs:
         role-to-assume: ${{ inputs.aws-role }}
         aws-region: eu-west-2
         role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
-    - name: Get latest image details
-      id: latest-ecr-version-file
-      shell: bash
-      env:
-        ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
-      run: |
-        aws ecr describe-images --repository-name "${ECR_REGISTRY_PATH}" --filter tagStatus=TAGGED --query 'sort_by(imageDetails,& imagePushedAt)[-1]' > ecr_versions.json
-        echo "latest-image<<EOF" >> $GITHUB_OUTPUT
-        cat ecr_versions.json >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
-    - name: get latest version
+
+    # Only images tagged with a version number are release images; others (e.g. test builds of branches)
+    # are not versions and cannot be compared by update-allowed
+    - name: Get latest release version
       id: latest
       shell: bash
       env:
-        IMAGE_TAG_0: ${{ fromJson(steps.latest-ecr-version-file.outputs.latest-image).imageTags[0] }}
-        IMAGE_TAG_1: ${{ fromJson(steps.latest-ecr-version-file.outputs.latest-image).imageTags[1] }}
+        ECR_REGISTRY_PATH: ${{ inputs.ecr_registry_path }}
+        VERSION_REGEX: '^v?[0-9]+(\.[0-9]+){0,2}$'
       run: |
-        if ! [ -f ecr_versions.json ]; then
-          echo "latest-version=0.0" >> $GITHUB_OUTPUT
-        fi
-        if [ -f ecr_versions.json ]; then
-           echo "latest-version=${IMAGE_TAG_0}" >> $GITHUB_OUTPUT
-        fi
-        if [ -f ecr_versions.json ] && [ -n "${IMAGE_TAG_1}" ] && [ "${IMAGE_TAG_0}" = "latest" ];  then
-           echo "latest-version=${IMAGE_TAG_1}" >> $GITHUB_OUTPUT ;
-        fi
+        latest="$(aws ecr describe-images --repository-name "${ECR_REGISTRY_PATH}" --filter tagStatus=TAGGED --output json \
+          | jq -r --arg re "${VERSION_REGEX}" '
+              [.imageDetails[] | select(any(.imageTags[]?; test($re)))]
+              | sort_by(.imagePushedAt) | last
+              | (.imageTags // []) | map(select(test($re))) | first // "0.0.0"')"
+        echo "latest-version=${latest}" >> "$GITHUB_OUTPUT"
