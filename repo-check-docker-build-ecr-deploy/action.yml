@@ -101,14 +101,14 @@ runs:
     # The repo must exist before it can be checked
     - name: create ecr repo if required
       id: create-ecr-repo
-      uses: nationalarchives/da-tre-github-actions/create-ecr-repository@0.0.10
+      uses: nationalarchives/da-tre-github-actions/create-ecr-repository@1629bcbfc39177a2a175455ddbb7cb3a07b15ff2 # 0.0.94
       with:
         ecr_registry_path: "${{inputs.ecr_registry_path}}"
         aws-role: "${{ inputs.aws_role }}"
     # Check if the version has been deployed steps.deployed.outputs.version-deployed == 1 if deployed
     - name: version deployed
       id: deployed
-      uses: nationalarchives/da-tre-github-actions/version-deployed@0.0.11
+      uses: nationalarchives/da-tre-github-actions/version-deployed@1629bcbfc39177a2a175455ddbb7cb3a07b15ff2 # 0.0.94
       with:
         ecr_registry_path: "${{inputs.ecr_registry_path}}"
         new-tag: "${{ steps.build_target.outputs.tag }}"
@@ -138,14 +138,14 @@ runs:
     - name: get latest ecr version released
       if: ${{ steps.build_target.outputs.use_latest_git_tag == 'true' }}
       id: latest-ecr-version-tag
-      uses: nationalarchives/da-tre-github-actions/latest-ecr-version@0.0.94
+      uses: nationalarchives/da-tre-github-actions/latest-ecr-version@1629bcbfc39177a2a175455ddbb7cb3a07b15ff2 # 0.0.94
       with:
         ecr_registry_path: "${{inputs.ecr_registry_path}}"
         aws-role: "${{ inputs.aws_role }}"
     - name: ok to update
       if: ${{ steps.build_target.outputs.use_latest_git_tag == 'true' }}
       id: update_okay
-      uses: nationalarchives/da-tre-github-actions/update-allowed@0.0.10
+      uses: nationalarchives/da-tre-github-actions/update-allowed@1629bcbfc39177a2a175455ddbb7cb3a07b15ff2 # 0.0.94
       with:
         current-tag: "${{steps.latest-ecr-version-tag.outputs.latest-version}}"
         new-tag: "${{ steps.build_target.outputs.tag }}"
@@ -174,7 +174,7 @@ runs:
         role-session-name: github-actions-${{ github.run_id }}-${{ github.run_attempt }}
     - name: build and push
       if: ${{ steps.ecr_check.outputs.build_needed == 'true' }}
-      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@8c69a9dfd7b77f552c852347b51f2827b1232237 # 0.0.91
+      uses: nationalarchives/da-tre-github-actions/.github/actions/docker-build-and-deploy-to-ecr@1629bcbfc39177a2a175455ddbb7cb3a07b15ff2 # 0.0.94
       with:
         ecr-registry-path: "${{steps.registry.outputs.ecr-registry-path}}"
         docker-file: "${{inputs.docker_file}}"
