@@ -21,6 +21,7 @@ This action requires inputs.
 - **docker_file** : The docker file used for the build in the GitHub repository
    - default: ```TRE/DockerfileV2```
 - **aws_role** : AWS role with permission to perform actions on account's ECR
+- **branch** (optional) : Branch to build as a test build instead of the latest release tag
 
 ### Outputs
 
